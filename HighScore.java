@@ -13,6 +13,6 @@ public class HighScore {
 
     @Override
     public String toString() {
-        return "HighScore: " + highScore;
+        return "HighScore:\n" + highScore;
     }
 }
