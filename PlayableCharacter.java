@@ -29,13 +29,11 @@ public class PlayableCharacter {
         this.position = position;
     }
 
+
     @Override
     public String toString() {
-        //TODO fixa utskrift
-
-        return "PlayableCharacter{" +
-                "position=" + Arrays.toString(position) +
-                '}';
+        return "PlayableCharacter [position x =" + position[0] + " position y " + position[1]
+                + ", size=" + Arrays.toString(size) + "]";
     }
     public void yMovement(){
         //TODO
