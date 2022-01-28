@@ -37,4 +37,8 @@ public class PlayableCharacter {
                 "position=" + Arrays.toString(position) +
                 '}';
     }
+    public void yMovement(){
+        //TODO
+        //Method for moving character on y-axis
+    }
 }
