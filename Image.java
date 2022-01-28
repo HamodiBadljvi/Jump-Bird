@@ -1,6 +1,11 @@
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class Image {
+    static JFrame f;
+    static JLabel l;
+
 
     ImageIcon background;
 
@@ -8,14 +13,17 @@ public class Image {
     try{
         background = new ImageIcon(getClass().getResource("background"));
         //display image on screen
-        JLabel = new JLabel(background);
-        frame.add(JLabel);
+        l = new JLabel(background);
+        f = new JFrame();
+        f.add(l);
     } catch(Exception e){
         System.out.println("Image not found!");
     }
     //set size of background image(change x)
-    //frame.pack(); better?
-    frame.setSize(x, x);
-    frame.setVisable(true);
+    //f.setSize(x, x);
+    f.pack();
+    f.setVisible(true);
+
+    }
 }
-}
+
