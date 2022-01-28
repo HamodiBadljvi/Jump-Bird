@@ -1,23 +1,24 @@
 import java.util.Arrays;
 
 public class PlayableCharacter {
-    //position[0] is x (horisontal) and position[1] is y (vertical)
+    // position[0] is x (horisontal) and position[1] is y (vertical)
+    //Maybe x axis is of no use
     private int[] position = new int[2];
     private int[] size = new int[2];
 
-    public PlayableCharacter(){
+    public PlayableCharacter() {
         this.position[0] = 10;
         this.position[1] = 10;
-        this.size[0]     = 10;
-        this.size[1]     = 10;
-        
+        this.size[0] = 10;
+        this.size[1] = 10;
+
     }
-    public PlayableCharacter(int posx, int posy,int height, int width){
+
+    public PlayableCharacter(int posx, int posy, int height, int width) {
         this.position[0] = posx;
         this.position[1] = posy;
-        this.size[0]     = height;
-        this.size[1]     = width;
-
+        this.size[0] = height;
+        this.size[1] = width;
 
     }
 
@@ -29,14 +30,14 @@ public class PlayableCharacter {
         this.position = position;
     }
 
-
     @Override
     public String toString() {
         return "PlayableCharacter [position x =" + position[0] + " position y " + position[1]
-                + ", size=" + Arrays.toString(size) + "]";
+                + ", size=" + size[0] + " x " + size[1] + "]";
     }
-    public void yMovement(){
-        //TODO
-        //Method for moving character on y-axis
+
+    public void yMovement() {
+        // TODO
+        // Method for moving character on y-axis
     }
 }
