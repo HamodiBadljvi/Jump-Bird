@@ -2,14 +2,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Image {
+public class BackGround {
     static JFrame f;
     static JLabel l;
 
-
+    
     ImageIcon background;
 
-    public void background(){
+    public BackGround(){
     try{
         background = new ImageIcon(getClass().getResource("background"));
         //display image on screen
@@ -21,8 +21,8 @@ public class Image {
     }
     //set size of background image(change x)
     //f.setSize(x, x);
-    f.pack();
-    f.setVisible(true);
+    //f.pack();
+    //f.setVisible(true);
 
     }
 }
