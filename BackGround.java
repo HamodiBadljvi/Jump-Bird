@@ -19,10 +19,9 @@ public class BackGround {
     } catch(Exception e){
         System.out.println("Image not found!");
     }
-    //set size of background image(change x)
-    //f.setSize(x, x);
-    //f.pack();
-    //f.setVisible(true);
+    
+    
+    
 
     }
 }
