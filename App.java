@@ -1,9 +1,5 @@
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 public class App<Graphics2D> extends JFrame {
     final static int x = 400;
