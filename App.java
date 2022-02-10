@@ -1,39 +1,26 @@
-import java.io.File;
-import java.io.IOException;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 
-public class App<Graphics2D> {
-    private transient static BufferedImage apan;
-    private int shipImageSpriteCount;
+public class App<Graphics2D> extends JFrame {
     final static int x = 400;
     final static int y = 400;
 
     public static void main(String[] args) {
 
-        JFrame frame = new JFrame("test");
+        JFrame frame = new JFrame("Jumpy-Bird");
         // GameSurface surface = new GameSurFace(400);
-
 
         frame.setSize(x, y);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.getContentPane().setBackground(Color.red);
     }
 
-    // @param g the graphics to paint on
-
-    private void drawSurface(Graphics2D g) {
-        final Dimension d = new Dimension(x, y);
-
-                // fill the background
-                ((Graphics) g).setColor(Color.RED);
-        ((Graphics) g).fillRect(0, 0, d.width, d.height);
-
-    }
 }
