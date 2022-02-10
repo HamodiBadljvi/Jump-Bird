@@ -1,6 +1,5 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
@@ -13,7 +12,6 @@ public class App<Graphics2D> extends JFrame {
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Jumpy-Bird");
-        // GameSurface surface = new GameSurFace(400);
 
         frame.setSize(x, y);
         frame.setResizable(false);
