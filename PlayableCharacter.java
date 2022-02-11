@@ -1,41 +1,37 @@
-import java.awt.geom.Point2D;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 
 public class PlayableCharacter {
 
-    private Point2D position2d;
-    private Rectangle2D rect2d;
+    private transient BufferedImage img;
+    Rectangle r;
 
     //Creates character with rectangle that has position (0,0) and size (0,0)
     public PlayableCharacter(){
-        this.rect2d = new Rectangle2D.Double();
+        this.r = new Rectangle();
     }
 
-    //Creates character that is a rectangle with width and height
-    //that has its top left corner in point2D
-    public PlayableCharacter(double width, double height, Point2D point2D){
-        this.position2d = new Point2D.Double(point2D.getX(), point2D.getY());
-        this.rect2d = new Rectangle2D.Double(point2D.getX(), point2D.getY(),width,height);
-    }
-    public void setPosition2d(Point2D p){
-        this.position2d = p;
+
+    //New constructor, that adds image to rectangle when created
+    public PlayableCharacter(int width, int height, int xPos, int yPos, BufferedImage img, Graphics2D g){
+        try {
+            this.img = ImageIO.read(new File("Apan200x200.png"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        this.r = new Rectangle(xPos, yPos, width, height);
+        int offset = 46; //Ta reda på vad detta är
+        g.drawImage(img, r.x, r.y, r.x + r.width, r.y + r.height, offset, 0, offset + 46, 20, null);
+        
     }
 
-    public Point2D getPosition2d() {
-        return position2d;
-    }
 
-    public Rectangle2D getRect2d() {
-        return rect2d;
-    }
 
-    @Override
-    public String toString() {
-        return "Character{" +
-                "rect2d=" + rect2d +
-                ", position2d=" + position2d +
-                '}';
-    }
 }
 

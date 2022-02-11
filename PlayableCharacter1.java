@@ -1,5 +1,8 @@
 import java.util.Arrays;
 
+//THIS CLASS IS NOT USED
+//WILL PROBABLY NOT BE USED
+
 public class PlayableCharacter1 {
     // position[0] is x (horisontal) and position[1] is y (vertical)
     //Maybe x axis is of no use
