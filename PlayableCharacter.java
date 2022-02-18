@@ -18,7 +18,7 @@ public class PlayableCharacter {
 
 
     //New constructor, that adds image to rectangle when created
-    public PlayableCharacter(int width, int height, int xPos, int yPos, BufferedImage img, Graphics2D g){
+    public PlayableCharacter(int width, int height, int xPos, int yPos, Graphics2D g){
         try {
             this.img = ImageIO.read(new File("Apan200x200.png"));
         } catch (IOException e) {
@@ -28,7 +28,7 @@ public class PlayableCharacter {
         this.r = new Rectangle(xPos, yPos, width, height);
         int offset = 46; //Ta reda på vad detta är
         g.drawImage(img, r.x, r.y, r.x + r.width, r.y + r.height, offset, 0, offset + 46, 20, null);
-        
+
     }
 
 
