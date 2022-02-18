@@ -22,6 +22,7 @@ public class GameSurface extends JPanel implements KeyListener {
         try {
             this.monkeySprite = ImageIO.read(new File("Apan200x200.png"));
         } catch (Exception e) {
+            System.err.println("Monke problem");
             // TODO: handle exception
         }
 
