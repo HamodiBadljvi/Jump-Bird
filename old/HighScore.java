@@ -1,3 +1,4 @@
+package old;
 public class HighScore {
     private int highScore;
 

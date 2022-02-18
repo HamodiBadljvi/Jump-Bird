@@ -1,6 +1,6 @@
+import javax.swing.SwingUtilities;
 
-
-public class FrameUpdater {
+public class FrameUpdater extends Thread {
     private final long timeBetweenUpdates;
     private GameSurface surface;
 
@@ -9,10 +9,37 @@ public class FrameUpdater {
         this.timeBetweenUpdates = Math.floorDiv(1_000_000_000, fps);
     }
 
-    public void start() {
+    @Override
+    public void run() {
+        final long startTime = System.nanoTime();
+
+        while (!isInterrupted()) {
+            long currentTime = System.nanoTime();
+            long timeAtNextUpdate = currentTime + timeBetweenUpdates;
+
+            surface.update((int) ((currentTime - startTime) / 1_000_000));
+
+            SwingUtilities.invokeLater(() -> surface.repaint());
+
+            sleepRemaining(timeAtNextUpdate - 1_000_000);
+
+            while (System.nanoTime() < timeAtNextUpdate) {
+                yield();
+            }
+        }
     }
 
-    public void setDaemon(boolean b) {
-    }
+    public void sleepRemaining(long sleepToNanos) {
+        long totalNanosLeft = sleepToNanos - System.nanoTime();
+        long millisLeft = totalNanosLeft / 1_000_000;
+        int nanosLeft = (int) (totalNanosLeft - millisLeft * 1_000_000);
 
+        if (millisLeft > 0 || nanosLeft > 0) {
+            try {
+                Thread.sleep(millisLeft, nanosLeft);
+            } catch (InterruptedException ex) {
+                interrupt();
+            }
+        }
+    }
 }
