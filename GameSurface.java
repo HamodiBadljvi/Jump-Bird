@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Color;
 
 public class GameSurface extends JPanel implements KeyListener {
     private List<Pipe> pipes;
@@ -42,6 +43,7 @@ public class GameSurface extends JPanel implements KeyListener {
     }
 
     private void drawSurface(Graphics2D g) {
+        int offset = 100;
         if (gameOver) {  //gameover do this
         // TODO
     }
