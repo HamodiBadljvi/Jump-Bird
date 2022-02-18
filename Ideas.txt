@@ -15,10 +15,15 @@ main:
 	timer från swing som anropar repaint med vald frkvens
 
 
-
-
-
-
 Våra ideér för framtid
 kolla addAlien för pipes senare
 	update för kollision(gameover)
+
+
+Ideér Anton Andreas efter parprogrammering fredag 18/2:
+
+Pipes in grafiskt
+Sidescrolling
+Koppla rectangle till monkey image för framtida rectange interaktioner(se hampus kod, rect.instersect)
+Fixa movement för monkey(y-led behövs bara)
+Fixa kollisioner(gameOver)
