@@ -10,12 +10,11 @@ public class App extends JFrame {
 
         JFrame frame = new JFrame("Jumpy-Bird");
 
-        GameSurface gs = new GameSurface(400); // This is a Jlabel
+        GameSurface gs = new GameSurface(x, y); // This is a Jlabel
 
         frame.setSize(x, y);
         frame.setResizable(false);
         frame.add(gs);
-        // frame.add(new JLabel(new ImageIcon("background.png")));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

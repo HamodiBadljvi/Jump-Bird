@@ -1,3 +1,4 @@
+/*
 import javax.swing.SwingUtilities;
 
 public class FrameUpdater extends Thread {
@@ -43,3 +44,4 @@ public class FrameUpdater extends Thread {
         }
     }
 }
+*/
