@@ -1,0 +1,24 @@
+Få bild på character och lyckas visa på skärmen
+
+
+skapa bufferedimage
+lägga den på samma position med samma size som rect
+
+
+   HAMPUS
+
+skapa ny klass extend jpanel
+	paintcomponent
+		ska rita allt
+
+main:
+	timer från swing som anropar repaint med vald frkvens
+
+
+
+
+
+
+Våra ideér för framtid
+kolla addAlien för pipes senare
+	update för kollision(gameover)
