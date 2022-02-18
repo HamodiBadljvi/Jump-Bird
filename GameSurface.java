@@ -89,8 +89,8 @@ public class GameSurface extends JPanel implements KeyListener {
          * }
          */
         if (monkeySprite != null) {
-            g.drawImage(monkeySprite, 200 + offset,
-                    100 + offset - 15, 100, 100, null); // Anton ska hitta algoritm för position, (utan offset)
+            g.drawImage(monkeySprite, (d.width / 2 - 100) + offset,
+                    (d.height / 2 - 100) + offset - 15, 100, 100, null);
         } else {
             // TODO
             g.setColor(Color.red);
@@ -98,7 +98,8 @@ public class GameSurface extends JPanel implements KeyListener {
         }
 
     }
-    /* Unused method
+    /*
+     * Unused method
      * public void update(int time) {
      * if (gameOver) {
      * updater.interrupt();
