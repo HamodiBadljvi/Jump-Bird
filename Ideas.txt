@@ -1,8 +1,8 @@
-Få bild på character och lyckas visa på skärmen
+Få bild på character och lyckas visa på skärmen - Check
 
 
 skapa bufferedimage
-lägga den på samma position med samma size som rect
+lägga den på samma position med samma size som rect - Check
 
 
    HAMPUS
@@ -12,7 +12,7 @@ skapa ny klass extend jpanel
 		ska rita allt
 
 main:
-	timer från swing som anropar repaint med vald frkvens
+	timer från swing som anropar repaint med vald frkvens - Check
 
 
 Våra ideér för framtid
@@ -24,6 +24,6 @@ Ideér Anton Andreas efter parprogrammering fredag 18/2:
 
 Pipes in grafiskt
 Sidescrolling
-Koppla rectangle till monkey image för framtida rectange interaktioner(se hampus kod, rect.instersect)
-Fixa movement för monkey(y-led behövs bara)
+Koppla rectangle till monkey image för framtida rectange interaktioner(se hampus kod, rect.instersect) - Check
+Fixa movement för monkey(y-led behövs bara) - Check
 Fixa kollisioner(gameOver)

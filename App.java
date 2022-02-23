@@ -1,24 +1,25 @@
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class App extends JFrame {
-    final static int x = 600;
-    final static int y = 400;
+    final static int WIDTH = 600;
+    final static int HEIGHT = 400;
 
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Jumpy-Bird");
 
-        GameSurface gs = new GameSurface(x, y); // This is a Jlabel
+        GameSurface gs = new GameSurface(WIDTH, HEIGHT); // This is a Jlabel
 
-        frame.setSize(x, y);
+        frame.setSize(WIDTH, HEIGHT);
         frame.setResizable(false);
         frame.add(gs);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
+        gs.requestFocus();
         // frame.pack();
     }
 

@@ -5,8 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Timer;
+import java.util.concurrent.ThreadLocalRandom;
 import java.awt.event.KeyEvent;
+import javax.swing.Timer;
 import java.awt.event.KeyListener;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -17,17 +18,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameSurface extends JPanel implements KeyListener {
+    private int ticks, yMotion, score, highscore;
     private static final double PIPE_PIXELS_PER_MS = 0.12;
     private BufferedImage background;
     private List<Pipe> pipes;
+    private int monkeySize = 75;
     // private transient FrameUpdater updater;
-    // private Rectangle monkey;
+    private Rectangle monkey = new Rectangle(10, 150, monkeySize, monkeySize);
     private transient BufferedImage monkeySprite;
     private boolean gameOver;
     Timer timer;
 
     public GameSurface(final int width, final int height) {
-
+        addKeyListener(this);
         try {
             this.monkeySprite = ImageIO.read(new File("resources/Apan200x200.png"));
             this.background = ImageIO.read(new File("resources/background.png"));
@@ -89,13 +92,19 @@ public class GameSurface extends JPanel implements KeyListener {
          * }
          */
         if (monkeySprite != null) {
-            g.drawImage(monkeySprite, (d.width / 2 - 100) + offset,
-                    (d.height / 2 - 100) + offset - 15, 100, 100, null);
+            // g.drawImage(monkeySprite, (d.width / 2 - 100) + offset,
+            // (d.height / 2 - 100) + offset - 15, 100, 100, null);
+            g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
+                    (int) monkey.getHeight(), null);
         } else {
             // TODO
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
+        fall(monkey);
+        // g.setColor(Color.black);
+        // g.fillRect((int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
+        // (int) monkey.getHeight());
 
     }
     /*
@@ -115,23 +124,41 @@ public class GameSurface extends JPanel implements KeyListener {
      * }
      */
 
+    private void fall(Rectangle r) {
+        int fallspeed = 2;
+        if (gameOver) {
+            return;
+        } else {
+            r.y = (int) (r.getY() + fallspeed);
+        }
+
+    }
+
     // #region keySTuff
     @Override
     public void keyReleased(KeyEvent e) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         // Do nothing.
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // Do nothing.
+        int y = getY();
 
+        if (gameOver) {
+            return;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            monkey.translate(0, -20);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0);
+        }
     }
     // #endregion
 }
