@@ -12,8 +12,10 @@ import java.awt.event.KeyListener;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -24,7 +26,7 @@ public class GameSurface extends JPanel implements KeyListener {
     private List<Pipe> pipes;
     private int monkeySize = 75;
     // private transient FrameUpdater updater;
-    private Rectangle monkey = new Rectangle(10, 150, monkeySize, monkeySize);
+    private Rectangle monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2), monkeySize, monkeySize);
     private transient BufferedImage monkeySprite;
     private boolean gameOver;
     Timer timer;
@@ -79,6 +81,9 @@ public class GameSurface extends JPanel implements KeyListener {
         }
 
         g.drawImage(background, 0, 0, null);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", 1, 75));
+        g.drawString("Welcome", App.WIDTH / 2 - 160, 75);
         /*
          * This is not used but could be used for a simpler background thats not using
          * an image file
@@ -125,7 +130,7 @@ public class GameSurface extends JPanel implements KeyListener {
      */
 
     private void fall(Rectangle r) {
-        int fallspeed = 2;
+        int fallspeed = 5;
         if (gameOver) {
             return;
         } else {
@@ -136,7 +141,7 @@ public class GameSurface extends JPanel implements KeyListener {
 
     // #region keySTuff
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
     }
 
@@ -146,7 +151,7 @@ public class GameSurface extends JPanel implements KeyListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyReleased(KeyEvent e) {
         int y = getY();
 
         if (gameOver) {
@@ -154,7 +159,7 @@ public class GameSurface extends JPanel implements KeyListener {
         }
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            monkey.translate(0, -20);
+            monkey.translate(0, -100);
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
