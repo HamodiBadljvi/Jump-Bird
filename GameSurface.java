@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.Timer;
 import java.awt.event.KeyListener;
 import java.awt.Graphics;
@@ -19,14 +21,15 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GameSurface extends JPanel implements KeyListener {
+public class GameSurface extends JPanel implements KeyListener, MouseListener {
     private int ticks, yMotion, score, highscore;
     private static final double PIPE_PIXELS_PER_MS = 0.12;
     private BufferedImage background;
     private List<Pipe> pipes;
     private int monkeySize = 75;
     // private transient FrameUpdater updater;
-    private Rectangle monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2), monkeySize, monkeySize);
+    private Rectangle monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
+            monkeySize, monkeySize);
     private transient BufferedImage monkeySprite;
     private boolean gameOver;
     Timer timer;
@@ -139,16 +142,10 @@ public class GameSurface extends JPanel implements KeyListener {
 
     }
 
+public void drawRectangle (Graphics g, Rectangle rect){
+    g.fillRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(),(int)rect.getHeight());
+}
     // #region keySTuff
-    @Override
-    public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Do nothing.
-    }
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -164,6 +161,61 @@ public class GameSurface extends JPanel implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
+        /*
+        try{
+            File wavFile = new File(sound.wav);
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStrean(wavFile));
+            clip.start();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        */
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        
+    }
+    
+    //#region Unused
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+    }
+    
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Do nothing.
+    }
+    
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    //#endregion
     // #endregion
+
 }

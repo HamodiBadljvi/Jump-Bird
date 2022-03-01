@@ -1,0 +1,5 @@
+Fungerande pipes
+Krock/dö och ev. poängräkning
+Animation
+Ljud
+Maven-implementation
