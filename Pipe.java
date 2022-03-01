@@ -7,10 +7,11 @@ public class Pipe {
     List<Rectangle> pipes;
     int space = 200;
     int width = 50;
-    int randHeight = ThreadLocalRandom.current().nextInt(space + 20, App.HEIGHT - 19);
+    int randHeight;
 
-    public void addPipe(boolean start) {
+    public List<Rectangle> addPipe(boolean start) {
         pipes = new ArrayList<Rectangle>();
+        randHeight = ThreadLocalRandom.current().nextInt(space + 20, App.HEIGHT - 19);
 
         if (start) {
             // Lower pipe
@@ -18,8 +19,10 @@ public class Pipe {
             // Upper pipe
             pipes.add(new Rectangle(App.WIDTH + width, 0, width, randHeight - space));
         } else {
-            pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x + 600, App.HEIGHT - randHeight - 120, width, randHeight));
+            pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x + 600, App.HEIGHT - randHeight - 120, width,
+                    randHeight));
             pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x, 0, width, App.HEIGHT - randHeight - space));
         }
+        return pipes;
     }
 }

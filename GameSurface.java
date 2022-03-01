@@ -1,41 +1,38 @@
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.Timer;
-import java.awt.event.KeyListener;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class GameSurface extends JPanel implements KeyListener, MouseListener {
-    private int ticks, yMotion, score, highscore;
-    private static final double PIPE_PIXELS_PER_MS = 0.12;
+    private int monkeySize = 75, fallspeed = 5;
     private BufferedImage background;
-    private List<Pipe> pipes;
-    private int monkeySize = 75;
+    private List<Rectangle> pipe1, pipe2, pipe3, pipe4;
     // private transient FrameUpdater updater;
     private Rectangle monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
             monkeySize, monkeySize);
     private transient BufferedImage monkeySprite;
-    private boolean gameOver;
-    Timer timer;
+    private boolean gameOver, started;
+    private Timer timer;
+    private int pipeSpeed = 5;
 
     public GameSurface(final int width, final int height) {
         addKeyListener(this);
+        addMouseListener(this);
         try {
             this.monkeySprite = ImageIO.read(new File("resources/Apan200x200.png"));
             this.background = ImageIO.read(new File("resources/background.png"));
@@ -43,21 +40,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
             System.err.println("Monke problem");
             // TODO: handle exception
         }
+        Pipe p = new Pipe();
+        pipe1 = p.addPipe(true);
 
         this.gameOver = false;
-        /*
-         * Comments/unused code
-         * this.pipes = new ArrayList<>();
-         * this.monkey = new Rectangle(20, width / 2 - 15, 50, 50); // (xpos, ypos,
-         * width, height) ??????
-         *
-         * this.updater = new FrameUpdater(this, 60);
-         * this.updater.setDaemon(true);
-         * this.updater.start();
-         */
         timer = new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                movePipes(pipe1);
                 repaint();
             }
         });
@@ -77,7 +67,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
     }
 
     private void drawSurface(Graphics2D g) {
-        int offset = 46;
         final Dimension d = this.getSize();
         if (gameOver) { // gameover do this
             // TODO
@@ -100,15 +89,13 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
          * }
          */
         if (monkeySprite != null) {
-            // g.drawImage(monkeySprite, (d.width / 2 - 100) + offset,
-            // (d.height / 2 - 100) + offset - 15, 100, 100, null);
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
                     (int) monkey.getHeight(), null);
         } else {
-            // TODO
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
+        drawRectangles(g, pipe1);
         fall(monkey);
         // g.setColor(Color.black);
         // g.fillRect((int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
@@ -132,8 +119,13 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
      * }
      */
 
+    public void movePipes(List<Rectangle> pipes) {
+        for (Rectangle rect : pipes) {
+            rect.x = rect.x - pipeSpeed;
+        }
+    }
+
     private void fall(Rectangle r) {
-        int fallspeed = 5;
         if (gameOver) {
             return;
         } else {
@@ -142,80 +134,93 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
 
     }
 
-public void drawRectangle (Graphics g, Rectangle rect){
-    g.fillRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(),(int)rect.getHeight());
-}
-    // #region keySTuff
+    private void jump() {
+        if (!started) {
+            started = true;
+        } else if (!gameOver) {
+            monkey.translate(0, -100);
+        }
+    }
+
+    private void playAudio() {
+        // try{
+        // File wavFile = new File(sound.wav);
+        // Clip clip = AudioSystem.getClip();
+        // clip.open(AudioSystem.getAudioInputStrean(wavFile));
+        // clip.start();
+        // } catch (Exception e) {
+        // System.out.println(e);
+        // }
+    }
+
+    public void drawRectangle(Graphics g, Rectangle rect) {
+        g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
+    }
+
+    public void drawRectangles(Graphics g, List<Rectangle> rectangles) {
+        for (Rectangle rect : rectangles) {
+            drawRectangle(g, rect);
+        }
+    }
+    // #region keyStuff
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int y = getY();
-
         if (gameOver) {
             return;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            monkey.translate(0, -100);
+            jump();
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
-        /*
-        try{
-            File wavFile = new File(sound.wav);
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStrean(wavFile));
-            clip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        */
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            jump();
+        }
     }
-    
-    //#region Unused
+
+    // #region Unused
 
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
     }
-    
 
     @Override
     public void keyTyped(KeyEvent e) {
         // Do nothing.
     }
-    
 
     @Override
     public void mousePressed(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    //#endregion
+    // #endregion
     // #endregion
 
 }
