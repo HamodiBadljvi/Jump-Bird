@@ -27,6 +27,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private transient BufferedImage monkeySprite;
     private boolean gameOver, started;
     private Timer fps;
+    private Pipe pipe;
 
     public GameSurface(final int width, final int height) {
         monkeySize = 75;
@@ -46,8 +47,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             System.err.println("Monke problem");
             // TODO: handle exception
         }
-        Pipe p = new Pipe();
-        pipe1 = p.addPipe(true);
+        pipe = new Pipe();
+        pipe1 = pipe.addPipe();
 
         fps = new Timer(0, this);
         fps.setRepeats(true);
@@ -66,11 +67,23 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void actionPerformed(ActionEvent e) {
         ticks++;
 
-        if (started) {
+        for (Rectangle rectangle : pipe1) {
+            if (rectangle.intersects(monkey)) {
+                gameOver = true;
+            }
+        }
+
+        if (started)
+
+        {
             if (ticks % 2 == 0 && fallspeed < 8) {
                 fallspeed += 2;
             }
             monkey.y += fallspeed;
+        }
+
+        if (ticks % 200 == 0) {
+            pipe1 = pipe.addPipe();
         }
 
         movePipes(pipe1);
@@ -80,8 +93,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     @Override
     protected void paintComponent(Graphics g) {
         g.drawImage(background, 0, 0, this);
-        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        super.paintComponent(g);
         // TODO
         drawSurface(g2d);
     }
@@ -115,8 +128,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
-        drawRectangles(g, pipe1);
-        fall(monkey);
+
+        if (started) {
+            drawRectangles(g, pipe1);
+        }
         // g.setColor(Color.black);
         // g.fillRect((int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
         // (int) monkey.getHeight());
@@ -127,15 +142,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         for (Rectangle rect : pipes) {
             rect.x = rect.x - pipeSpeed;
         }
-    }
-
-    private void fall(Rectangle r) {
-        if (gameOver) {
-            return;
-        } else {
-            r.y = (int) (r.getY() + fallspeed);
-        }
-
     }
 
     private void jump() {
@@ -190,9 +196,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             jump();
+            if (!fps.isRunning()) {
+                fps.start();
+            }
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
+            if (fps.isRunning()) {
+                fps.stop();
+            } else {
+                fps.start();
+            }
+            // System.exit(0);
         }
     }
 
