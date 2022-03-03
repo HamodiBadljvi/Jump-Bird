@@ -50,8 +50,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         pipes = new ArrayList<>();
         message = "Welcome";
         score = 0;
-        monkeyWidth = (int)(monkeySprite.getWidth() * 0.4);
-        monkeyHeight = (int)(monkeySprite.getHeight() * 0.4);
+        monkeyWidth = (int) (monkeySprite.getWidth() * 0.4);
+        monkeyHeight = (int) (monkeySprite.getHeight() * 0.4);
         ticks = 0;
 
         monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
@@ -105,9 +105,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                         pipes.remove(currentRec);
                     }
                 }
-
-                if (ticks % 2 == 0 && fallspeed < 9) {
-                    fallspeed += 1;
+                // "fallspeed < X" where X = maximum fallspeed.
+                if (ticks % 2 == 0 && fallspeed < 10) {
+                    fallspeed += 2;
                 }
                 monkey.y += fallspeed;
 
@@ -171,23 +171,21 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             grounded = false;
             score = 0;
             monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
-            monkeyWidth, monkeyHeight);
+                    monkeyWidth, monkeyHeight);
             fallspeed = 0;
             gameOver = false;
             pipes.clear();
         }
-
         if (!started) {
             started = true;
 
         }
-
         if (!gameOver) {
             if (fallspeed > 0) {
                 fallspeed = 0;
             }
-            if (fallspeed > -6) {
-                fallspeed -= 6;
+            if (fallspeed > -9) {
+                fallspeed -= 9;
             }
         }
     }
