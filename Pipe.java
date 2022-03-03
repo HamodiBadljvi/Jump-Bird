@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 
 public class Pipe {
     List<Rectangle> pipes;
-    int space = 200;
+    int space = 150;
     int width = 50;
     int randHeight;
 

@@ -18,8 +18,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class GameSurface extends JPanel implements KeyListener, MouseListener {
-    private int monkeySize = 75, fallspeed = 5;
+public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private int monkeySize, fallspeed, pipeSpeed, ticks;
     private BufferedImage background;
     private List<Rectangle> pipe1, pipe2, pipe3, pipe4;
     // private transient FrameUpdater updater;
@@ -27,12 +27,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
             monkeySize, monkeySize);
     private transient BufferedImage monkeySprite;
     private boolean gameOver, started;
-    private Timer timer;
-    private int pipeSpeed = 5;
+    private Timer fps;
 
     public GameSurface(final int width, final int height) {
+        monkeySize = 75;
+        fallspeed = 4;
+        pipeSpeed = 4;
+        ticks = 0;
+
         addKeyListener(this);
         addMouseListener(this);
+
         try {
             this.monkeySprite = ImageIO.read(new File("resources/Apan200x200.png"));
             this.background = ImageIO.read(new File("resources/background.png"));
@@ -44,17 +49,25 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
         pipe1 = p.addPipe(true);
 
         this.gameOver = false;
-        timer = new Timer(0, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                movePipes(pipe1);
-                repaint();
-            }
-        });
-        timer.setRepeats(true);
+
+        fps = new Timer(0, this);
+        fps.setRepeats(true);
         // Aprox. 60 FPS
-        timer.setDelay(17);
-        timer.start();
+        fps.setDelay(17);
+        fps.start();
+
+        // pipeRate = new Timer();
+
+        // pipeRate.setRepeats(true);
+        // pipeRate.setDelay(100);
+        // pipeRate.start();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ticks++;
+        movePipes(pipe1);
+        repaint();
     }
 
     @Override
@@ -102,22 +115,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
         // (int) monkey.getHeight());
 
     }
-    /*
-     * Unused method
-     * public void update(int time) {
-     * if (gameOver) {
-     * updater.interrupt();
-     * return;
-     * }
-     *
-     * final Dimension d = getSize();
-     * if (d.height <= 0 || d.width <= 0) {
-     * // if the panel has not been placed properly in the frame yet
-     * // just return without updating any state
-     * return;
-     * }
-     * }
-     */
 
     public void movePipes(List<Rectangle> pipes) {
         for (Rectangle rect : pipes) {
@@ -135,11 +132,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener {
     }
 
     private void jump() {
-        if (!started) {
-            started = true;
-        } else if (!gameOver) {
-            monkey.translate(0, -100);
-        }
+        monkey.translate(0, -75);
     }
 
     private void playAudio() {
