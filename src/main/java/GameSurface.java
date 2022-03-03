@@ -24,11 +24,8 @@ import javax.swing.Timer;
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
     private BufferedImage background;
     private List<Rectangle> pipes;
-    // private List<List<Rectangle>> pipes;
-
-    // private transient FrameUpdater updater;
     private Rectangle monkey;
-    private transient BufferedImage monkeySprite;
+    private BufferedImage monkeySprite;
     private boolean gameOver, started, grounded;
     private Timer fps;
     private Pipe pipeMaker;
@@ -75,21 +72,19 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             message = Integer.toString(score);
             // If you collide with the ground
             if (monkey.y + monkey.height >= App.HEIGHT) {
-                fallspeed = 0;
-                gameOver = true;
-                grounded = true;
+                gameOver();
+                grounded();
             }
             // If you collide with the ceiling.
             if (monkey.y <= 0) {
-                gameOver = true;
+                gameOver();
             }
             if (!grounded) {
                 for (int i = 0; i < pipes.size(); i++) {
                     Rectangle currentRec = pipes.get(i);
 
                     if (currentRec.intersects(monkey)) {
-                        gameOver = true;
-                        pipeSpeed = 0;
+                        gameOver();
                         if (score > highScore) {
                             highScore = score;
                         }
@@ -163,6 +158,16 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         for (Rectangle rect : pipes) {
             rect.x = rect.x - pipeSpeed;
         }
+    }
+
+    private void gameOver() {
+        gameOver = true;
+        pipeSpeed = 0;
+    }
+
+    private void grounded() {
+        grounded = true;
+        fallspeed = 0;
     }
 
     private void jump() {
