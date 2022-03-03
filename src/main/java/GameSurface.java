@@ -41,8 +41,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         addMouseListener(this);
 
         try {
-            this.monkeySprite = ImageIO.read(new File("resources/Apan200x200.png"));
-            this.background = ImageIO.read(new File("resources/background.png"));
+            this.monkeySprite = ImageIO.read(new File("src/main/resources/Apan200x200.png"));
+            this.background = ImageIO.read(new File("src/main/resources/background.png"));
         } catch (Exception e) {
             System.err.println("Monke problem");
             // TODO: handle exception
