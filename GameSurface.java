@@ -23,17 +23,18 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private BufferedImage background;
     private List<Rectangle> pipe1, pipe2, pipe3, pipe4;
     // private transient FrameUpdater updater;
-    private Rectangle monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
-            monkeySize, monkeySize);
+    private Rectangle monkey;
     private transient BufferedImage monkeySprite;
     private boolean gameOver, started;
     private Timer fps;
 
     public GameSurface(final int width, final int height) {
         monkeySize = 75;
-        fallspeed = 4;
         pipeSpeed = 4;
         ticks = 0;
+
+        monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
+                monkeySize, monkeySize);
 
         addKeyListener(this);
         addMouseListener(this);
@@ -47,8 +48,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
         Pipe p = new Pipe();
         pipe1 = p.addPipe(true);
-
-        this.gameOver = false;
 
         fps = new Timer(0, this);
         fps.setRepeats(true);
@@ -66,6 +65,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     @Override
     public void actionPerformed(ActionEvent e) {
         ticks++;
+
+        if (started) {
+            if (ticks % 2 == 0 && fallspeed < 8) {
+                fallspeed += 2;
+            }
+            monkey.y += fallspeed;
+        }
+
         movePipes(pipe1);
         repaint();
     }
@@ -132,7 +139,25 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void jump() {
-        monkey.translate(0, -75);
+        if (gameOver) {
+            monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
+                    monkeySize, monkeySize);// Reset monkey position
+            fallspeed = 0;// Reset fallspeed(duh)
+            gameOver = false;
+        }
+
+        if (!started) {
+            started = true;
+        }
+
+        if (!gameOver) {
+            if (fallspeed > 0) {
+                fallspeed = 0;
+            }
+            if (fallspeed > -8) {
+                fallspeed -= 8;
+            }
+        }
     }
 
     private void playAudio() {
