@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
-    private int monkeySize, fallspeed, pipeSpeed, ticks;
     private BufferedImage background;
     private List<Rectangle> pipes;
     // private List<List<Rectangle>> pipes;
@@ -33,22 +32,12 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private boolean gameOver, started, grounded;
     private Timer fps;
     private Pipe pipeMaker;
-    private String message;
+    private int fallspeed, pipeSpeed, ticks;
     private int score, lastScore, highScore;
+    private String message;
+    private int monkeyHeight, monkeyWidth;
 
     public GameSurface(final int width, final int height) {
-        pipes = new ArrayList<>();
-        message = "Welcome";
-        score = 0;
-        monkeySize = 75;
-        ticks = 0;
-
-        monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
-                monkeySize, monkeySize);
-
-        addKeyListener(this);
-        addMouseListener(this);
-
         try {
             this.monkeySprite = ImageIO.read(new File("src/main/resources/Apan200x200.png"));
             this.background = ImageIO.read(new File("src/main/resources/background.png"));
@@ -56,7 +45,20 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             System.err.println("Monke problem");
             // TODO: handle exception
         }
+
         pipeMaker = new Pipe();
+        pipes = new ArrayList<>();
+        message = "Welcome";
+        score = 0;
+        monkeyWidth = (int)(monkeySprite.getWidth() * 0.4);
+        monkeyHeight = (int)(monkeySprite.getHeight() * 0.4);
+        ticks = 0;
+
+        monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
+                monkeyWidth, monkeyHeight);
+
+        addKeyListener(this);
+        addMouseListener(this);
 
         fps = new Timer(0, this);
         fps.setRepeats(true);
@@ -92,7 +94,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                             highScore = score;
                         }
                     }
-                    if (i % 2 == 0 && currentRec.x + (currentRec.width / 2) == monkey.x) {
+                    if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
+                            && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
                         // Fråga Hampus varför detta inte funkar
                         // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
                         // monkey.x + (monkey.width / 2)
@@ -103,8 +106,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                     }
                 }
 
-                if (ticks % 2 == 0 && fallspeed < 8) {
-                    fallspeed += 2;
+                if (ticks % 2 == 0 && fallspeed < 9) {
+                    fallspeed += 1;
                 }
                 monkey.y += fallspeed;
 
@@ -167,8 +170,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         if (gameOver) {
             grounded = false;
             score = 0;
-            monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
-                    monkeySize, monkeySize);
+            monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
+            monkeyWidth, monkeyHeight);
             fallspeed = 0;
             gameOver = false;
             pipes.clear();
@@ -183,8 +186,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             if (fallspeed > 0) {
                 fallspeed = 0;
             }
-            if (fallspeed > -8) {
-                fallspeed -= 8;
+            if (fallspeed > -6) {
+                fallspeed -= 6;
             }
         }
     }
