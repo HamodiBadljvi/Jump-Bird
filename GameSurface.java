@@ -12,26 +12,34 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.text.AttributeSet.ColorAttribute;
 
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
     private int monkeySize, fallspeed, pipeSpeed, ticks;
     private BufferedImage background;
-    private List<Rectangle> pipe1, pipe2, pipe3, pipe4;
+    private List<Rectangle> pipes;
+    // private List<List<Rectangle>> pipes;
+
     // private transient FrameUpdater updater;
     private Rectangle monkey;
     private transient BufferedImage monkeySprite;
-    private boolean gameOver, started;
+    private boolean gameOver, started, grounded;
     private Timer fps;
-    private Pipe pipe;
+    private Pipe pipeMaker;
+    private String message;
+    private int score, lastScore, highScore;
 
     public GameSurface(final int width, final int height) {
+        pipes = new ArrayList<>();
+        message = "Welcome";
+        score = 0;
         monkeySize = 75;
-        pipeSpeed = 4;
         ticks = 0;
 
         monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
@@ -47,8 +55,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             System.err.println("Monke problem");
             // TODO: handle exception
         }
-        pipe = new Pipe();
-        pipe1 = pipe.addPipe();
+        pipeMaker = new Pipe();
 
         fps = new Timer(0, this);
         fps.setRepeats(true);
@@ -67,27 +74,54 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void actionPerformed(ActionEvent e) {
         ticks++;
 
-        for (Rectangle rectangle : pipe1) {
-            if (rectangle.intersects(monkey)) {
+        if (started) {
+            message = Integer.toString(score);
+            //Bottom
+            if (monkey.y + monkey.height >= App.HEIGHT) {
+                fallspeed = 0;
+                gameOver = true;
+                grounded = true;
+            }
+            //Top
+            if (monkey.y <= 0) {
                 gameOver = true;
             }
-        }
+            if (!grounded) {
+                for (int i = 0; i < pipes.size(); i++) {
+                    Rectangle currentRec = pipes.get(i);
 
-        if (started)
+                    if (currentRec.intersects(monkey)) {
+                        gameOver = true;
+                        pipeSpeed = 0;
+                        if (score > highScore) {
+                            highScore = score;
+                        }
+                    }
+                    if (i % 2 == 0 && currentRec.x + (currentRec.width / 2) == monkey.x) {
+                        // Fråga Hampus varför detta inte funkar
+                        // i % 2 == 0 && currentRec.x + (currentRec.width / 2) == monkey.x +
+                        // (monkey.width / 2
+                        score++;
+                    }
+                    if (currentRec.x + currentRec.width < 0) {
+                        pipes.remove(currentRec);
+                    }
+                }
 
-        {
-            if (ticks % 2 == 0 && fallspeed < 8) {
-                fallspeed += 2;
+                if (ticks % 2 == 0 && fallspeed < 8) {
+                    fallspeed += 2;
+                }
+                monkey.y += fallspeed;
+
+                if (ticks % (int) (App.WIDTH / 12) == 0) {
+                    pipeMaker.addPipe(pipes);
+                }
+                if (!pipes.isEmpty()) {
+                    movePipes(pipes);
+                }
             }
-            monkey.y += fallspeed;
+            repaint();
         }
-
-        if (ticks % 200 == 0) {
-            pipe1 = pipe.addPipe();
-        }
-
-        movePipes(pipe1);
-        repaint();
     }
 
     @Override
@@ -101,14 +135,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     private void drawSurface(Graphics2D g) {
         final Dimension d = this.getSize();
-        if (gameOver) { // gameover do this
-            // TODO
-        }
 
         g.drawImage(background, 0, 0, null);
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", 1, 75));
-        g.drawString("Welcome", App.WIDTH / 2 - 160, 75);
+
         /*
          * This is not used but could be used for a simpler background thats not using
          * an image file
@@ -130,12 +159,18 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
 
         if (started) {
-            drawRectangles(g, pipe1);
+            drawRectangles(g, pipes);
         }
-        // g.setColor(Color.black);
-        // g.fillRect((int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
-        // (int) monkey.getHeight());
 
+        if (gameOver) { // gameover do this
+            message = "You died ";
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", 1, 25));
+            g.drawString("Score: " + score, App.WIDTH / 2 - 160, 150);
+        }
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", 1, 50));
+        g.drawString(message, App.WIDTH / 2 - 160, 75);
     }
 
     public void movePipes(List<Rectangle> pipes) {
@@ -145,15 +180,20 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void jump() {
+        pipeSpeed = 4;
         if (gameOver) {
+            grounded = false;
+            score = 0;
             monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
                     monkeySize, monkeySize);// Reset monkey position
             fallspeed = 0;// Reset fallspeed(duh)
             gameOver = false;
+            pipes.clear();
         }
 
         if (!started) {
             started = true;
+
         }
 
         if (!gameOver) {
@@ -181,19 +221,18 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
 
-    public void drawRectangles(Graphics g, List<Rectangle> rectangles) {
-        for (Rectangle rect : rectangles) {
+    public void drawRectangles(Graphics g, List<Rectangle> pipes) {
+        g.setColor(Color.GREEN);
+        for (Rectangle rect : pipes) {
             drawRectangle(g, rect);
         }
+
     }
+
     // #region keyStuff
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (gameOver) {
-            return;
-        }
-
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             jump();
             if (!fps.isRunning()) {
@@ -201,12 +240,12 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (fps.isRunning()) {
-                fps.stop();
-            } else {
-                fps.start();
-            }
-            // System.exit(0);
+            // if (fps.isRunning()) {
+            // fps.stop();
+            // } else {
+            // fps.start();
+            // }
+            System.exit(0);
         }
     }
 

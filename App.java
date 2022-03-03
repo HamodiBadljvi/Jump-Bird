@@ -22,6 +22,7 @@ public class App extends JFrame {
 
         GameSurface gs = new GameSurface(WIDTH, HEIGHT); // This is a Jlabel
 
+        frame.setUndecorated(true);
         frame.setSize(WIDTH, HEIGHT);
         frame.setResizable(false);
         frame.add(gs);
