@@ -20,7 +20,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.swing.text.AttributeSet.ColorAttribute;
 
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
     private int monkeySize, fallspeed, pipeSpeed, ticks;
@@ -64,12 +63,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         // Aprox. 60 FPS
         fps.setDelay(17);
         fps.start();
-
-        // pipeRate = new Timer();
-
-        // pipeRate.setRepeats(true);
-        // pipeRate.setDelay(100);
-        // pipeRate.start();
     }
 
     @Override
@@ -78,13 +71,13 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (started) {
             message = Integer.toString(score);
-            //Bottom
+            // If you collide with the ground
             if (monkey.y + monkey.height >= App.HEIGHT) {
                 fallspeed = 0;
                 gameOver = true;
                 grounded = true;
             }
-            //Top
+            // If you collide with the ceiling.
             if (monkey.y <= 0) {
                 gameOver = true;
             }
@@ -101,8 +94,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                     }
                     if (i % 2 == 0 && currentRec.x + (currentRec.width / 2) == monkey.x) {
                         // Fråga Hampus varför detta inte funkar
-                        // i % 2 == 0 && currentRec.x + (currentRec.width / 2) == monkey.x +
-                        // (monkey.width / 2
+                        // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
+                        // monkey.x + (monkey.width / 2)
                         score++;
                     }
                     if (currentRec.x + currentRec.width < 0) {
@@ -140,18 +133,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         g.drawImage(background, 0, 0, null);
 
-        /*
-         * This is not used but could be used for a simpler background thats not using
-         * an image file
-         * g.setColor(Color.CYAN);
-         * g.fillRect(0, 0, d.width, d.height);
-         *
-         * color during gameover?
-         *
-         * TODO
-         * for (Pipe pipe : pipes) { // color and pos?
-         * }
-         */
         if (monkeySprite != null) {
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
                     (int) monkey.getHeight(), null);
@@ -164,7 +145,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             drawRectangles(g, pipes);
         }
 
-        if (gameOver) { // gameover do this
+        if (gameOver) {
             message = "You died ";
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", 1, 25));
@@ -187,8 +168,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             grounded = false;
             score = 0;
             monkey = new Rectangle((App.WIDTH / 2) - (monkeySize / 2), (App.HEIGHT / 2) - (monkeySize / 2),
-                    monkeySize, monkeySize);// Reset monkey position
-            fallspeed = 0;// Reset fallspeed(duh)
+                    monkeySize, monkeySize);
+            fallspeed = 0;
             gameOver = false;
             pipes.clear();
         }
@@ -242,11 +223,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            // if (fps.isRunning()) {
-            // fps.stop();
-            // } else {
-            // fps.start();
-            // }
             System.exit(0);
         }
     }
@@ -262,36 +238,26 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Do nothing.
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
     // #endregion
     // #endregion
