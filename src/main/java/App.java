@@ -1,5 +1,3 @@
-package src.main.java;
-
 import javax.swing.JFrame;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -8,14 +6,22 @@ public class App extends JFrame {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     static int WIDTH = 600;
     static int HEIGHT = 400;
+    private static String arg1;
+    private static boolean fullscreen = false;
 
     public static void main(String[] args) {
+        if (args.length >= 1) {
+            arg1 = args[0];
+            if (arg1.equals("fs")) {
+                fullscreen = true;
+            }
+        } else {
+            arg1 = "";
+        }
 
         JFrame frame = new JFrame("Jumpy-Bird");
 
-        boolean fullscreen = false;
-
-        if (fullscreen) {
+        if (fullscreen || arg1.equals("fs")) {
             WIDTH = (int) screenSize.getWidth();
             HEIGHT = (int) screenSize.getHeight();
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -32,7 +38,5 @@ public class App extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         gs.requestFocus();
-        // frame.pack();
     }
-
 }

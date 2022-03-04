@@ -1,5 +1,3 @@
-package src.main.java;
-
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.awt.Rectangle;

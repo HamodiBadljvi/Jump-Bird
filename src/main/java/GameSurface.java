@@ -1,5 +1,3 @@
-package src.main.java;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,7 +11,13 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +30,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private List<Rectangle> pipes;
     private Rectangle monkey;
     private BufferedImage monkeySprite;
-    private boolean gameOver, started, grounded;
+    private boolean gameOver, started, grounded, bounce;
     private Timer fps;
     private Pipe pipeMaker;
-    private int fallspeed, pipeSpeed, ticks;
+    private int fallspeed, pipeSpeed, ticks, bounceSpeed;
     private int score, lastScore, highScore;
     private String message;
     private int monkeyHeight, monkeyWidth;
@@ -64,12 +68,35 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps.start();
     }
 
+    private void getHighScore() {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("score.log"))) {
+            highScore = reader.read();
+            if (highScore < 0) {
+                highScore = 0;
+            }
+        } catch (IOException e) {
+            // TODO: handle exception
+        }
+    }
+
+    private void saveScore() {
+        try (FileWriter writer = new FileWriter("score.log");
+                BufferedWriter bw = new BufferedWriter(writer);) {
+            if (gameOver) {
+                bw.write(highScore);
+            }
+
+        } catch (IOException e) {
+            // TODO: handle exception
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ticks++;
 
         if (started) {
-            message = Integer.toString(score);
+            message = score + " | " + highScore;
             // If you collide with the ground
             if (monkey.y + monkey.height >= App.HEIGHT) {
                 gameOver();
@@ -77,6 +104,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             }
             // If you collide with the ceiling.
             if (monkey.y <= 0) {
+                hitHead();
                 gameOver();
             }
             if (!grounded) {
@@ -84,10 +112,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                     Rectangle currentRec = pipes.get(i);
 
                     if (currentRec.intersects(monkey)) {
+                        bounce = true;
                         gameOver();
-                        if (score > highScore) {
-                            highScore = score;
-                        }
                     }
                     if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
                             && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
@@ -95,6 +121,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                         // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
                         // monkey.x + (monkey.width / 2)
                         score++;
+                        if (score > highScore) {
+                            highScore = score;
+                        }
                     }
                     if (currentRec.x + currentRec.width < 0) {
                         pipes.remove(currentRec);
@@ -103,6 +132,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 // "fallspeed < X" where X = maximum fallspeed.
                 if (ticks % 2 == 0 && fallspeed < 10) {
                     fallspeed += 2;
+                    if (bounce) {
+                        if (fallspeed < 0) {
+                            fallspeed = 0;
+                        }
+                        bounceSpeed = 9;
+                        bounce = false;
+                    }
+                }
+                if (bounceSpeed > 0) {
+                    monkey.x -= bounceSpeed;
+                    bounceSpeed--;
                 }
                 monkey.y += fallspeed;
 
@@ -147,7 +187,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             message = "You died ";
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", 1, 25));
-            g.drawString("Score: " + score, App.WIDTH / 2 - 160, 150);
+            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 160, 150);
         }
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", 1, 50));
@@ -163,11 +203,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void gameOver() {
         gameOver = true;
         pipeSpeed = 0;
+        saveScore();
     }
 
     private void grounded() {
         grounded = true;
-        fallspeed = 0;
+        monkey.y = App.HEIGHT - monkeyHeight;
+    }
+
+    private void hitHead() {
+        monkey.y = 0;
+        fallspeed = 4;
     }
 
     private void jump() {
@@ -182,6 +228,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             pipes.clear();
         }
         if (!started) {
+            getHighScore();
             started = true;
 
         }
