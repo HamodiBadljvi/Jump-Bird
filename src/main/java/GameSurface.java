@@ -35,7 +35,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private Pipe pipeMaker;
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
     private int score, lastScore, highScore;
-    private String message;
     private int monkeyHeight, monkeyWidth;
 
     public GameSurface(final int width, final int height) {
@@ -49,14 +48,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         pipeMaker = new Pipe();
         pipes = new ArrayList<>();
-        message = "Welcome";
-        score = 0;
         monkeyWidth = (int) (monkeySprite.getWidth() * 0.4);
         monkeyHeight = (int) (monkeySprite.getHeight() * 0.4);
-        ticks = 0;
 
-        monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
-                monkeyWidth, monkeyHeight);
+        newMonkey();
 
         addKeyListener(this);
         addMouseListener(this);
@@ -68,26 +63,30 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps.start();
     }
 
-    private void getHighScore() {
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("score.log"))) {
-            highScore = reader.read();
-            if (highScore < 0) {
-                highScore = 0;
-            }
-        } catch (IOException e) {
-            // TODO: handle exception
+    private void jump() {
+        pipeSpeed = 4;
+        if (gameOver) {
+            bounceSpeed = 0;
+            grounded = false;
+            score = 0;
+            ticks = 0;
+            newMonkey();
+            fallspeed = 0;
+            gameOver = false;
+            pipes.clear();
         }
-    }
+        if (!started) {
+            getHighScore();
+            started = true;
 
-    private void saveScore() {
-        try (FileWriter writer = new FileWriter("score.log");
-                BufferedWriter bw = new BufferedWriter(writer);) {
-            if (gameOver) {
-                bw.write(highScore);
+        }
+        if (!gameOver) {
+            if (fallspeed > 0) {
+                fallspeed = 0;
             }
-
-        } catch (IOException e) {
-            // TODO: handle exception
+            if (fallspeed > -9) {
+                fallspeed -= 9;
+            }
         }
     }
 
@@ -96,8 +95,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         ticks++;
 
         if (started) {
-            message = score + " | " + highScore;
-            // If you collide with the ground
             if (monkey.y + monkey.height >= App.HEIGHT) {
                 gameOver();
                 grounded();
@@ -157,15 +154,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        g.drawImage(background, 0, 0, this);
-        Graphics2D g2d = (Graphics2D) g;
-        super.paintComponent(g);
-        // TODO
-        drawSurface(g2d);
-    }
-
     private void drawSurface(Graphics2D g) {
         final Dimension d = this.getSize();
 
@@ -179,66 +167,35 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             g.fillRect(0, 0, d.width, d.height);
         }
 
-        if (started) {
-            drawRectangles(g, pipes);
-        }
-
-        if (gameOver) {
-            message = "You died ";
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", 1, 25));
-            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 160, 150);
-        }
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", 1, 50));
-        g.drawString(message, App.WIDTH / 2 - 160, 75);
-    }
-
-    public void movePipes(List<Rectangle> pipes) {
-        for (Rectangle rect : pipes) {
-            rect.x = rect.x - pipeSpeed;
-        }
-    }
-
-    private void gameOver() {
-        gameOver = true;
-        pipeSpeed = 0;
-        saveScore();
-    }
-
-    private void grounded() {
-        grounded = true;
-        monkey.y = App.HEIGHT - monkeyHeight;
-    }
-
-    private void hitHead() {
-        monkey.y = 0;
-        fallspeed = 4;
-    }
-
-    private void jump() {
-        pipeSpeed = 4;
-        if (gameOver) {
-            grounded = false;
-            score = 0;
-            monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
-                    monkeyWidth, monkeyHeight);
-            fallspeed = 0;
-            gameOver = false;
-            pipes.clear();
-        }
         if (!started) {
-            getHighScore();
-            started = true;
-
+            g.setFont(new Font("Arial", 1, 50));
+            g.setColor(Color.BLACK);
+            g.drawString("Welcome", App.WIDTH / 2 - 155, 80);
+            g.setColor(Color.WHITE);
+            g.drawString("Welcome", App.WIDTH / 2 - 160, 75);
         }
-        if (!gameOver) {
-            if (fallspeed > 0) {
-                fallspeed = 0;
-            }
-            if (fallspeed > -9) {
-                fallspeed -= 9;
-            }
+
+        if (started && !gameOver) {
+            drawRectangles(g, pipes);
+
+            g.setFont(new Font("Arial", 1, 25));
+            g.setColor(Color.BLACK);
+            g.drawString("Score: " + score + " | " + highScore, 52, 52);
+            g.setColor(Color.WHITE);
+            g.drawString("Score: " + score + " | " + highScore, 50, 50);
+        }
+
+        if (gameOver) {
+            g.setFont(new Font("Arial", 1, 50));
+            g.setColor(Color.BLACK);
+            g.drawString("You died", App.WIDTH / 2 - 155, 80);
+            g.setColor(Color.WHITE);
+            g.drawString("You died", App.WIDTH / 2 - 160, 75);
+            g.setFont(new Font("Arial", 1, 25));
+            g.setColor(Color.BLACK);
+            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 158, 152);
+            g.setColor(Color.WHITE);
+            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 160, 150);
         }
     }
 
@@ -253,6 +210,37 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         // }
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.drawImage(background, 0, 0, this);
+        Graphics2D g2d = (Graphics2D) g;
+        super.paintComponent(g);
+        // TODO
+        drawSurface(g2d);
+    }
+
+    public void movePipes(List<Rectangle> pipes) {
+        for (Rectangle rect : pipes) {
+            rect.x = rect.x - pipeSpeed;
+        }
+    }
+
+    private void gameOver() {
+        gameOver = true;
+        pipeSpeed = 0;
+        saveHighScore();
+    }
+
+    private void grounded() {
+        grounded = true;
+        monkey.y = App.HEIGHT - monkeyHeight;
+    }
+
+    private void hitHead() {
+        monkey.y = 0;
+        fallspeed = 4;
+    }
+
     public void drawRectangle(Graphics g, Rectangle rect) {
         g.fillRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
     }
@@ -262,10 +250,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         for (Rectangle rect : pipes) {
             drawRectangle(g, rect);
         }
-
     }
-
-    // #region keyStuff
+    // #region keyStuff & G&S's
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -285,6 +271,34 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         if (e.getButton() == MouseEvent.BUTTON1) {
             jump();
         }
+    }
+
+    private void getHighScore() {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get("src/main/resources/score.log"))) {
+            highScore = reader.read();
+            if (highScore < 0) {
+                highScore = 0;
+            }
+        } catch (IOException e) {
+            // TODO: handle exception
+        }
+    }
+
+    private void saveHighScore() {
+        try (FileWriter writer = new FileWriter("src/main/resources/score.log");
+                BufferedWriter bw = new BufferedWriter(writer);) {
+            if (gameOver) {
+                bw.write(highScore);
+            }
+
+        } catch (IOException e) {
+            // TODO: handle exception
+        }
+    }
+
+    private void newMonkey() {
+        monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
+                monkeyWidth, monkeyHeight);
     }
 
     // #region Unused
@@ -314,5 +328,4 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
     // #endregion
     // #endregion
-
 }

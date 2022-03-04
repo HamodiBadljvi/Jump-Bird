@@ -16,4 +16,13 @@ public class Pipe {
         // Upper pipe
         pipes.add(new Rectangle(App.WIDTH, 0, width, randHeight - space));
     }
+
+    // TODO: Use for difficulty
+    public int getSpace() {
+        return space;
+    }
+
+    public void setSpace(int space) {
+        this.space = space;
+    }
 }
