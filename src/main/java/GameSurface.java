@@ -177,15 +177,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (started && !gameOver) {
             drawRectangles(g, pipes);
-
+            
             g.setFont(new Font("Arial", 1, 25));
             g.setColor(Color.BLACK);
             g.drawString("Score: " + score + " | " + highScore, 52, 52);
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score + " | " + highScore, 50, 50);
         }
-
+        
         if (gameOver) {
+            drawRectangles(g, pipes);
+
             g.setFont(new Font("Arial", 1, 50));
             g.setColor(Color.BLACK);
             g.drawString("You died", App.WIDTH / 2 - 155, 80);
