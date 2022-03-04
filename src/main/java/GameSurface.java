@@ -30,7 +30,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private List<Rectangle> pipes;
     private Rectangle monkey;
     private BufferedImage monkeySprite;
-    private boolean gameOver, started, grounded, bounce;
+    private boolean gameOver, started, bounce;
     private Timer fps;
     private Pipe pipeMaker;
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
@@ -47,6 +47,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
 
         pipeMaker = new Pipe();
+        pipeMaker.setSpace(150);
+
         pipes = new ArrayList<>();
         monkeyWidth = (int) (monkeySprite.getWidth() * 0.4);
         monkeyHeight = (int) (monkeySprite.getHeight() * 0.4);
@@ -65,25 +67,27 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     private void jump() {
         pipeSpeed = 4;
+
         if (gameOver) {
-            bounceSpeed = 0;
-            grounded = false;
-            score = 0;
-            ticks = 0;
             newMonkey();
+            bounceSpeed = 0;
             fallspeed = 0;
-            gameOver = false;
+            ticks = 0;
+            score = 0;
             pipes.clear();
+            gameOver = false;
         }
+
         if (!started) {
             getHighScore();
             started = true;
-
         }
+
         if (!gameOver) {
             if (fallspeed > 0) {
                 fallspeed = 0;
             }
+
             if (fallspeed > -9) {
                 fallspeed -= 9;
             }
@@ -96,59 +100,58 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (started) {
             if (monkey.y + monkey.height >= App.HEIGHT) {
-                gameOver();
                 grounded();
             }
             // If you collide with the ceiling.
             if (monkey.y <= 0) {
                 hitHead();
-                gameOver();
             }
-            if (!grounded) {
-                for (int i = 0; i < pipes.size(); i++) {
-                    Rectangle currentRec = pipes.get(i);
 
-                    if (currentRec.intersects(monkey)) {
-                        bounce = true;
-                        gameOver();
-                    }
-                    if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
-                            && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
-                        // Fråga Hampus varför detta inte funkar
-                        // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
-                        // monkey.x + (monkey.width / 2)
-                        score++;
-                        if (score > highScore) {
-                            highScore = score;
-                        }
-                    }
-                    if (currentRec.x + currentRec.width < 0) {
-                        pipes.remove(currentRec);
-                    }
-                }
-                // "fallspeed < X" where X = maximum fallspeed.
-                if (ticks % 2 == 0 && fallspeed < 10) {
-                    fallspeed += 2;
-                    if (bounce) {
-                        if (fallspeed < 0) {
-                            fallspeed = 0;
-                        }
-                        bounceSpeed = 9;
-                        bounce = false;
-                    }
-                }
-                if (bounceSpeed > 0) {
-                    monkey.x -= bounceSpeed;
-                    bounceSpeed--;
-                }
-                monkey.y += fallspeed;
+            for (int i = 0; i < pipes.size(); i++) {
+                Rectangle currentRec = pipes.get(i);
 
-                if (ticks % (int) (App.WIDTH / 12) == 0) {
-                    pipeMaker.addPipe(pipes);
+                if (currentRec.intersects(monkey)) {
+                    bounce = true;
+                    gameOver();
                 }
-                if (!pipes.isEmpty()) {
-                    movePipes(pipes);
+                if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
+                        && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
+                    // Fråga Hampus varför detta inte funkar
+                    // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
+                    // monkey.x + (monkey.width / 2)
+                    score++;
+                    if (score > highScore) {
+                        highScore = score;
+                    }
                 }
+                if (currentRec.x + currentRec.width < 0) {
+                    pipes.remove(currentRec);
+                }
+            }
+            // "fallspeed < X" where X = maximum fallspeed.
+            if (ticks % 2 == 0 && fallspeed < 10) {
+                fallspeed += 2;
+                if (bounce) {
+                    if (fallspeed < 0) {
+                        fallspeed = 0;
+                    }
+                    bounceSpeed = 9;
+                    bounce = false;
+                }
+            }
+
+            if (bounceSpeed > 0) {
+                monkey.x -= bounceSpeed;
+                bounceSpeed--;
+            }
+            monkey.y += fallspeed;
+
+            if (ticks % (int) (App.WIDTH / 12) == 0) {
+                pipeMaker.addPipe(pipes);
+            }
+
+            if (!pipes.isEmpty()) {
+                movePipes(pipes);
             }
             repaint();
         }
@@ -177,14 +180,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (started && !gameOver) {
             drawRectangles(g, pipes);
-            
+
             g.setFont(new Font("Arial", 1, 25));
             g.setColor(Color.BLACK);
             g.drawString("Score: " + score + " | " + highScore, 52, 52);
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score + " | " + highScore, 50, 50);
         }
-        
+
         if (gameOver) {
             drawRectangles(g, pipes);
 
@@ -234,13 +237,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void grounded() {
-        grounded = true;
-        monkey.y = App.HEIGHT - monkeyHeight;
+        monkey.y = App.HEIGHT - monkeyHeight - 10;
+        gameOver();
     }
 
     private void hitHead() {
         monkey.y = 0;
         fallspeed = 4;
+        gameOver();
     }
 
     public void drawRectangle(Graphics g, Rectangle rect) {
@@ -263,6 +267,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 fps.start();
             }
         }
+
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
