@@ -9,24 +9,24 @@ public class App extends JFrame {
     private static boolean fullscreen = false;
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Jumpy-Bird");
+        JFrame gameFrame = new JFrame("Jumpy-Bird");
 
         if (fullscreen) {
             WIDTH = (int) screenSize.getWidth();
             HEIGHT = (int) screenSize.getHeight();
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(true);
+            gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            gameFrame.setUndecorated(true);
         }
 
-        GameSurface gs = new GameSurface(WIDTH, HEIGHT); // This is a Jlabel
+        GameSurface gs = new GameSurface(); // This is a Jlabel
 
-        frame.setUndecorated(true);
-        frame.setSize(WIDTH, HEIGHT);
-        frame.setResizable(false);
-        frame.add(gs);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        gameFrame.setUndecorated(true);
+        gameFrame.setSize(WIDTH, HEIGHT);
+        gameFrame.setResizable(false);
+        gameFrame.add(gs);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setLocationRelativeTo(null);
+        gameFrame.setVisible(true);
         gs.requestFocus();
     }
 }

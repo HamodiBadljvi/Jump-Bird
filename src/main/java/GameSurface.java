@@ -34,20 +34,22 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private Timer fps;
     private Pipe pipeMaker;
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
-    private int score, lastScore, highScore;
+    private int score, highScore;
     private int monkeyHeight, monkeyWidth;
+    private int[] pipeSpace = { 150, 200, 250 };
+    private static int difficulty = 0;
 
-    public GameSurface(final int width, final int height) {
+    public GameSurface() {
         try {
             this.monkeySprite = ImageIO.read(new File("src/main/resources/apan.png"));
-            this.background = ImageIO.read(new File("src/main/resources/background.png"));
+            this.background = ImageIO.read(new File("src/main/resources/newBackg.png"));
         } catch (Exception e) {
             System.err.println("Monke problem");
             // TODO: handle exception
         }
 
         pipeMaker = new Pipe();
-        pipeMaker.setSpace(150);
+        pipeMaker.setSpace(pipeSpace[difficulty]);
 
         pipes = new ArrayList<>();
         monkeyWidth = (int) (monkeySprite.getWidth() * 0.5);
@@ -160,7 +162,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void drawSurface(Graphics2D g) {
         final Dimension d = this.getSize();
 
-        g.drawImage(background, 0, 0, null);
+        g.drawImage(background, 0, 0, App.WIDTH, App.HEIGHT, null);
 
         if (monkeySprite != null) {
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
@@ -217,10 +219,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     @Override
     protected void paintComponent(Graphics g) {
-        g.drawImage(background, 0, 0, this);
         Graphics2D g2d = (Graphics2D) g;
         super.paintComponent(g);
-        // TODO
         drawSurface(g2d);
     }
 
@@ -252,7 +252,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     public void drawRectangles(Graphics g, List<Rectangle> pipes) {
-        g.setColor(Color.GREEN);
+        g.setColor(Color.GREEN.darker().darker());
         for (Rectangle rect : pipes) {
             drawRectangle(g, rect);
         }
@@ -306,6 +306,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void newMonkey() {
         monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
                 monkeyWidth, monkeyHeight);
+    }
+
+    public static void setDifficulty(int newDifficulty) {
+        difficulty = newDifficulty;
     }
 
     // #region Unused
