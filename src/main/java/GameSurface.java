@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -64,7 +65,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps.setRepeats(true);
         // Aprox. 60 FPS
         fps.setDelay(17);
-        fps.start();
+        // fps.start();
     }
 
     private void jump() {
@@ -83,6 +84,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         if (!started) {
             getHighScore();
             started = true;
+            fps.start();
         }
 
         if (!gameOver) {
@@ -101,7 +103,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         ticks++;
 
         if (started) {
-            if (monkey.y + monkey.height >= App.HEIGHT) {
+            if (monkey.y + monkey.height >= App.getHEIGHT()) {
                 grounded();
             }
             // If you collide with the ceiling.
@@ -148,7 +150,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             }
             monkey.y += fallspeed;
 
-            if (ticks % (int) (App.WIDTH / 12) == 0) {
+            if (ticks % (int) (App.getWIDTH() / 12) == 0) {
                 pipeMaker.addPipe(pipes);
             }
 
@@ -162,7 +164,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void drawSurface(Graphics2D g) {
         final Dimension d = this.getSize();
 
-        g.drawImage(background, 0, 0, App.WIDTH, App.HEIGHT, null);
+        g.drawImage(background, 0, 0, App.getWIDTH(), App.getHEIGHT(), null);
 
         if (monkeySprite != null) {
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
@@ -173,17 +175,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
 
         if (!started) {
-            g.setFont(new Font("Arial", 1, 50));
+            g.setFont(new Font("Calibri", 1, 50));
             g.setColor(Color.BLACK);
-            g.drawString("Welcome", App.WIDTH / 2 - 155, 80);
+            g.drawString("Welcome", App.getWIDTH() / 2 - 155, 80);
             g.setColor(Color.WHITE);
-            g.drawString("Welcome", App.WIDTH / 2 - 160, 75);
+            g.drawString("Welcome", App.getWIDTH() / 2 - 160, 75);
         }
 
         if (started && !gameOver) {
             drawRectangles(g, pipes);
 
-            g.setFont(new Font("Arial", 1, 25));
+            g.setFont(new Font("Calibri", 1, 25));
             g.setColor(Color.BLACK);
             g.drawString("Score: " + score + " | " + highScore, 52, 52);
             g.setColor(Color.WHITE);
@@ -193,17 +195,29 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         if (gameOver) {
             drawRectangles(g, pipes);
 
-            g.setFont(new Font("Arial", 1, 50));
+            g.setFont(new Font("Calibri", 1, 50));
             g.setColor(Color.BLACK);
-            g.drawString("You died", App.WIDTH / 2 - 155, 80);
+            g.drawString("You died", App.getWIDTH() / 2 - 155, 80);
             g.setColor(Color.WHITE);
-            g.drawString("You died", App.WIDTH / 2 - 160, 75);
-            g.setFont(new Font("Arial", 1, 25));
+            g.drawString("You died", App.getWIDTH() / 2 - 160, 75);
+            g.setFont(new Font("Calibri", 1, 25));
             g.setColor(Color.BLACK);
-            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 158, 152);
+            g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 158, 152);
             g.setColor(Color.WHITE);
-            g.drawString("Score: " + score + " | " + highScore, App.WIDTH / 2 - 160, 150);
+            g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
         }
+    }
+
+    private void menu() {
+        JButton easy = new JButton("Easy");
+        easy.setBounds(App.getWIDTH() / 2 - 250, App.getHEIGHT() / 2, 150, 50);
+        JButton medium = new JButton("Medium");
+        medium.setBounds(App.getWIDTH() / 2 - 75, App.getHEIGHT() / 2, 150, 50);
+        JButton hard = new JButton("Hard");
+        hard.setBounds(App.getWIDTH() / 2 + 100, App.getHEIGHT() / 2, 150, 50);
+        this.add(easy);
+        this.add(medium);
+        this.add(hard);
     }
 
     private void playAudio() {
@@ -237,7 +251,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void grounded() {
-        monkey.y = App.HEIGHT - monkeyHeight - 10;
+        monkey.y = App.getHEIGHT() - monkeyHeight - 10;
         gameOver();
     }
 
@@ -252,7 +266,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     public void drawRectangles(Graphics g, List<Rectangle> pipes) {
-        g.setColor(Color.GREEN.darker().darker());
+        g.setColor(new Color(60, 159, 0));
         for (Rectangle rect : pipes) {
             drawRectangle(g, rect);
         }
@@ -304,7 +318,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void newMonkey() {
-        monkey = new Rectangle((App.WIDTH / 2) - (monkeyWidth / 2), (App.HEIGHT / 2) - (monkeyHeight / 2),
+        monkey = new Rectangle((App.getWIDTH() / 2) - (monkeyWidth / 2), (App.getHEIGHT() / 2) - (monkeyHeight / 2),
                 monkeyWidth, monkeyHeight);
     }
 

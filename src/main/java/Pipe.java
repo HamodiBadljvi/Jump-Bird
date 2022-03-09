@@ -9,12 +9,12 @@ public class Pipe {
     int randHeight;
 
     public void addPipe(List<Rectangle> pipes) {
-        randHeight = ThreadLocalRandom.current().nextInt(space + 20, App.HEIGHT - 19);
+        randHeight = ThreadLocalRandom.current().nextInt(space + 20, App.getHEIGHT() - 19);
 
         // Lower pipe
-        pipes.add(new Rectangle(App.WIDTH, randHeight, width, App.HEIGHT - randHeight));
+        pipes.add(new Rectangle(App.getWIDTH(), randHeight, width, App.getHEIGHT() - randHeight));
         // Upper pipe
-        pipes.add(new Rectangle(App.WIDTH, 0, width, randHeight - space));
+        pipes.add(new Rectangle(App.getWIDTH(), 0, width, randHeight - space));
     }
 
     // TODO: Use for difficulty
