@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -221,14 +224,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void playAudio() {
-        // try{
-        // File wavFile = new File(sound.wav);
-        // Clip clip = AudioSystem.getClip();
-        // clip.open(AudioSystem.getAudioInputStrean(wavFile));
-        // clip.start();
-        // } catch (Exception e) {
-        // System.out.println(e);
-        // }
+        try {
+            File wavFile = new File(("src/main/resources/jump.wav"));
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(wavFile));
+            clip.start();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @Override
@@ -276,7 +279,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            jump();
+            jump(); playAudio();
             if (!fps.isRunning()) {
                 fps.start();
             }
@@ -290,7 +293,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
-            jump();
+            jump(); playAudio();
         }
     }
 
