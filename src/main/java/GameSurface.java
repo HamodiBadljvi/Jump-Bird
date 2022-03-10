@@ -33,6 +33,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private List<Rectangle> pipes;
     private Rectangle monkey;
     private BufferedImage monkeySprite;
+    private BufferedImage[] monkeyBufferedImages = new BufferedImage[4];
+    private int currentMonkey;
     private boolean gameOver = false, started = false, grounded = false;
     private Timer fps;
     private Pipe pipeMaker;
@@ -47,7 +49,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     public GameSurface() {
         try {
-            this.monkeySprite = ImageIO.read(new File("src/main/resources/apan.png"));
+            this.monkeySprite = ImageIO.read(new File("src/main/resources/apan_bak.png"));
             this.background = ImageIO.read(new File("src/main/resources/newBackg.png"));
 
             jumpSound = AudioSystem.getClip();
@@ -56,6 +58,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             scoreSound.open(AudioSystem.getAudioInputStream(new File(("src/main/resources/score.wav"))));
             deathSound = AudioSystem.getClip();
             deathSound.open(AudioSystem.getAudioInputStream(new File(("src/main/resources/death.wav"))));
+
+            getNewMonkeyImage();
         } catch (Exception e) {
             System.err.println("Monke problem");
             // TODO: handle exception
@@ -180,9 +184,13 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         g.drawImage(background, 0, 0, App.getWIDTH(), App.getHEIGHT(), null);
 
         if (monkeySprite != null) {
+            monkeySprite = monkeyBufferedImages[currentMonkey];
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
                     (int) monkey.getHeight(), null);
-        } else {
+    
+            currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
+            
+            } else {
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
@@ -330,6 +338,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             jump();
+            playAudio(jumpSound);
+            if (!fps.isRunning()) {
+                fps.start();
+            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -341,6 +353,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             jump();
+            playAudio(jumpSound);
         }
     }
 
@@ -403,4 +416,15 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
     // #endregion
     // #endregion
+
+    private void getNewMonkeyImage() {
+        try {
+            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
+            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
+            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
+            monkeyBufferedImages[3] = monkeyBufferedImages[1];
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
