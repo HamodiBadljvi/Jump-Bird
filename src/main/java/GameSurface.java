@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.JButton;
@@ -34,16 +33,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private List<Rectangle> pipes;
     private Rectangle monkey;
     private BufferedImage monkeySprite;
-    private boolean gameOver, started, bounce;
+    private boolean gameOver = false, started = false, grounded = false;
     private Timer fps;
     private Pipe pipeMaker;
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
     private int score, highScore;
     private int monkeyHeight, monkeyWidth;
-    private int[] pipeSpace = { 150, 200, 250 };
+    private int[] pipeSpace = { 250, 200, 150 };
     private static int difficulty = 0;
     private Clip jumpSound, deathSound, scoreSound;
     private Color myGreen;
+    private JButton easy, medium, hard;
 
     public GameSurface() {
         try {
@@ -63,10 +63,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         myGreen = new Color(60, 159, 0);
 
-        pipeMaker = new Pipe();
-        pipeMaker.setSpace(pipeSpace[difficulty]);
-
         pipes = new ArrayList<>();
+        pipeMaker = new Pipe();
+
         monkeyWidth = (int) (monkeySprite.getWidth() * 0.5);
         monkeyHeight = (int) (monkeySprite.getHeight() * 0.5);
 
@@ -78,8 +77,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps = new Timer(0, this);
         fps.setRepeats(true);
         // Aprox. 60 FPS
-        fps.setDelay(25);
+        fps.setDelay(26);
         // fps.start();
+        menu();
     }
 
     private void jump() {
@@ -87,12 +87,14 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (gameOver) {
             newMonkey();
-            bounceSpeed = 0;
-            fallspeed = 0;
+            pipes.clear();
+            pipeMaker.addPipe(pipes);
             ticks = 0;
             score = 0;
-            pipes.clear();
             gameOver = false;
+            grounded = false;
+            bounceSpeed = 0;
+            fallspeed = 0;
         }
 
         if (!started) {
@@ -119,9 +121,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (started) {
             if (monkey.y + monkey.height >= App.getHEIGHT()) {
-                grounded();
+                groundedMethod();
             }
-            // If you collide with the ceiling.
+
             if (monkey.y <= 0) {
                 hitHead();
             }
@@ -130,8 +132,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 Rectangle currentRec = pipes.get(i);
 
                 if (currentRec.intersects(monkey)) {
-                    bounce = true;
-                    gameOver();
+                    bounceMethod();
                 }
                 if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
                         && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
@@ -144,27 +145,23 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                         highScore = score;
                     }
                 }
+
                 if (currentRec.x + currentRec.width < 0) {
                     pipes.remove(currentRec);
                 }
             }
             // "fallspeed < X" where X = maximum fallspeed.
-            if (ticks % 2 == 0 && fallspeed < 10) {
+            if (ticks % 2 == 0 && fallspeed < 12) {
                 fallspeed += 2;
-                if (bounce) {
-                    if (fallspeed < 0) {
-                        fallspeed = 0;
-                    }
-                    bounceSpeed = 9;
-                    bounce = false;
-                }
             }
 
             if (bounceSpeed > 0) {
                 monkey.x -= bounceSpeed;
                 bounceSpeed--;
             }
-            monkey.y += fallspeed;
+            if (!grounded) {
+                monkey.y += fallspeed;
+            }
 
             if (ticks % (int) (App.getWIDTH() / 12) == 0) {
                 pipeMaker.addPipe(pipes);
@@ -225,22 +222,52 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void menu() {
-        JButton easy = new JButton("Easy");
+        easy = new JButton("Easy");
         easy.setBounds(App.getWIDTH() / 2 - 250, App.getHEIGHT() / 2, 150, 50);
-        JButton medium = new JButton("Medium");
+        easy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pipeMaker.setSpace(200);
+                pipeMaker.addPipe(pipes);
+                removeButtons();
+            }
+        });
+        medium = new JButton("Medium");
         medium.setBounds(App.getWIDTH() / 2 - 75, App.getHEIGHT() / 2, 150, 50);
-        JButton hard = new JButton("Hard");
+        medium.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pipeMaker.setSpace(175);
+                pipeMaker.addPipe(pipes);
+                removeButtons();
+            }
+        });
+        hard = new JButton("Hard");
         hard.setBounds(App.getWIDTH() / 2 + 100, App.getHEIGHT() / 2, 150, 50);
+        hard.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pipeMaker.setSpace(150);
+                pipeMaker.addPipe(pipes);
+                removeButtons();
+            }
+        });
         this.add(easy);
         this.add(medium);
         this.add(hard);
+    }
+
+    private void removeButtons() {
+        remove(easy);
+        remove(medium);
+        remove(hard);
     }
 
     private void playAudio(Clip clip) {
         if (clip.getMicrosecondPosition() == clip.getMicrosecondLength()) {
             clip.setMicrosecondPosition(0);
         }
-        
+
         clip.start();
     }
 
@@ -257,21 +284,34 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
     }
 
-    private void gameOver() {
+    private void gameOverMethod() {
+        playAudio(deathSound);
         gameOver = true;
         pipeSpeed = 0;
         saveHighScore();
     }
 
-    private void grounded() {
-        monkey.y = App.getHEIGHT() - monkeyHeight - 10;
-        gameOver();
+    private void bounceMethod() {
+        if (fallspeed < 0) {
+            fallspeed = 0;
+        }
+        bounceSpeed = 9;
+        gameOverMethod();
+    }
+
+    private void groundedMethod() {
+        grounded = true;
+        fallspeed = 0;
+        monkey.y = App.getHEIGHT() - monkeyHeight;
+        if (!gameOver) {
+            gameOverMethod();
+        }
     }
 
     private void hitHead() {
         monkey.y = 0;
         fallspeed = 4;
-        gameOver();
+        gameOverMethod();
     }
 
     public void drawRectangle(Graphics g, Rectangle rect) {
@@ -290,9 +330,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             jump();
-            if (!fps.isRunning()) {
-                fps.start();
-            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
