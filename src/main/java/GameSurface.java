@@ -338,10 +338,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             jump();
-            playAudio(jumpSound);
-            if (!fps.isRunning()) {
-                fps.start();
-            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -353,7 +349,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             jump();
-            playAudio(jumpSound);
         }
     }
 
