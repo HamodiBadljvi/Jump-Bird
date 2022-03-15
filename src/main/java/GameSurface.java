@@ -36,7 +36,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private BufferedImage[] monkeyBufferedImages = new BufferedImage[4];
     private int currentMonkey;
     private int monkeyMovmentTime;
-    private boolean gameOver, started, bounce;
     private boolean gameOver = false, started = false, grounded = false;
     private Timer fps;
     private Pipe pipeMaker;
