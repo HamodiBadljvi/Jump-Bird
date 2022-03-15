@@ -6,39 +6,53 @@ public class App extends JFrame {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private static int WIDTH = 600;
     private static int HEIGHT = 400;
+    private static int difficulty;
     private static boolean fullscreen = false;
+    private static JFrame frame;
+    private static GameMenu menu;
 
     public static void main(String[] args) {
-        JFrame gameFrame = new JFrame("Jumpy-Bird");
+        frame = new JFrame("Jumpy-Bird");
 
         if (fullscreen) {
             WIDTH = (int) screenSize.getWidth();
             HEIGHT = (int) screenSize.getHeight();
-            gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            gameFrame.setUndecorated(true);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setUndecorated(true);
         }
 
-        GameSurface gs = new GameSurface(); // gameFrame is a Jlabel
+        menu = new GameMenu();
 
-        gameFrame.setUndecorated(true);
-        gameFrame.setSize(WIDTH, HEIGHT);
-        gameFrame.setResizable(false);
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setLocationRelativeTo(null);
-        gameFrame.setVisible(true);
-        gameFrame.add(gs);
-        gameFrame.setVisible(true);
-        gs.requestFocus();
+        frame.setUndecorated(true);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.add(menu);
+        frame.setVisible(true);
+        menu.requestFocus();
+
+    }
+
+    public static void startGame() {
+        GameSurface gameSurface = new GameSurface(difficulty); // gameFrame is a Jlabel
+        frame.remove(menu);
+        frame.add(gameSurface);
+        frame.setVisible(true);
+        gameSurface.requestFocus();
     }
 
     // #region G&S
-
     public static int getWIDTH() {
         return WIDTH;
     }
 
     public static int getHEIGHT() {
         return HEIGHT;
+    }
+
+    public static void setDifficulty(int newDifficulty) {
+        difficulty = newDifficulty;
     }
     // #endregion
 }

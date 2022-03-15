@@ -24,7 +24,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -42,13 +41,12 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
     private int score, highScore;
     private int monkeyHeight, monkeyWidth;
-    private int[] pipeSpace = { 250, 200, 150 };
-    private static int difficulty = 0;
+    private int[] pipeSpace = { 200, 175, 150 };
     private Clip jumpSound, deathSound, scoreSound;
     private Color myGreen;
-    private JButton easy, medium, hard;
 
-    public GameSurface() {
+    // Try get all the resources.
+    public GameSurface(int difficulty) {
         try {
             this.monkeySprite = ImageIO.read(new File("src/main/resources/apan_bak.png"));
             this.background = ImageIO.read(new File("src/main/resources/newBackg.png"));
@@ -70,6 +68,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         pipes = new ArrayList<>();
         pipeMaker = new Pipe();
+        pipeMaker.setSpace(pipeSpace[difficulty]);
 
         monkeyWidth = (int) (monkeySprite.getWidth() * 0.5);
         monkeyHeight = (int) (monkeySprite.getHeight() * 0.5);
@@ -79,17 +78,17 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         addKeyListener(this);
         addMouseListener(this);
 
+        // set fps/speed of the game.
         fps = new Timer(0, this);
         fps.setRepeats(true);
         // Aprox. 60 FPS
         fps.setDelay(26);
         // fps.start();
-        menu();
     }
 
     private void jump() {
         pipeSpeed = 4;
-
+        // if not gameover monkey can jump.
         if (gameOver) {
             newMonkey();
             pipes.clear();
@@ -188,11 +187,11 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             monkeySprite = monkeyBufferedImages[currentMonkey];
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
                     (int) monkey.getHeight(), null);
-            monkeyMovmentTime = (monkeyMovmentTime +1 ) % 10; //10*26ms=260
-            if (monkeyMovmentTime == 0){ 
-            currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
+            monkeyMovmentTime = (monkeyMovmentTime + 1) % 10; // 10*26ms=260
+            if (monkeyMovmentTime == 0) {
+                currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
             }
-            } else {
+        } else {
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
@@ -229,48 +228,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             g.setColor(Color.WHITE);
             g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
         }
-    }
-
-    private void menu() {
-        easy = new JButton("Easy");
-        easy.setBounds(App.getWIDTH() / 2 - 250, App.getHEIGHT() / 2, 150, 50);
-        easy.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pipeMaker.setSpace(200);
-                pipeMaker.addPipe(pipes);
-                removeButtons();
-            }
-        });
-        medium = new JButton("Medium");
-        medium.setBounds(App.getWIDTH() / 2 - 75, App.getHEIGHT() / 2, 150, 50);
-        medium.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pipeMaker.setSpace(175);
-                pipeMaker.addPipe(pipes);
-                removeButtons();
-            }
-        });
-        hard = new JButton("Hard");
-        hard.setBounds(App.getWIDTH() / 2 + 100, App.getHEIGHT() / 2, 150, 50);
-        hard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pipeMaker.setSpace(150);
-                pipeMaker.addPipe(pipes);
-                removeButtons();
-            }
-        });
-        this.add(easy);
-        this.add(medium);
-        this.add(hard);
-    }
-
-    private void removeButtons() {
-        remove(easy);
-        remove(medium);
-        remove(hard);
     }
 
     private void playAudio(Clip clip) {
@@ -380,10 +337,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void newMonkey() {
         monkey = new Rectangle((App.getWIDTH() / 2) - (monkeyWidth / 2), (App.getHEIGHT() / 2) - (monkeyHeight / 2),
                 monkeyWidth, monkeyHeight);
-    }
-
-    public static void setDifficulty(int newDifficulty) {
-        difficulty = newDifficulty;
     }
 
     // #region Unused
