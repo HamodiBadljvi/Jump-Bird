@@ -36,7 +36,7 @@ public class App extends JFrame {
     }
 
     public static void startGame() {
-        gameSurface = new GameSurface(difficulty); // gameFrame is a Jlabel
+        gameSurface = new GameSurface(difficulty);
         frame.remove(menu);
         frame.add(gameSurface);
         frame.repaint();

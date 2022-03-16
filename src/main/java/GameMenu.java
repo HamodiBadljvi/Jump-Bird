@@ -61,7 +61,7 @@ public class GameMenu extends JPanel implements ActionListener {
 
         } else if (source == close) {
             System.exit(0);
-            
+
         } else if (source == play) {
             App.setDifficulty(difficulty);
             App.startGame();

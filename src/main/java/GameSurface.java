@@ -81,9 +81,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         // set fps/speed of the game.
         fps = new Timer(0, this);
         fps.setRepeats(true);
-        // Aprox. 60 FPS
         fps.setDelay(26);
-        // fps.start();
     }
 
     private void jump() {
@@ -140,9 +138,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 }
                 if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
                         && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
-                    // Fråga Hampus varför detta inte funkar
-                    // i % 2 == 0 && currentRec.x + (currentRec.width / 2) ==
-                    // monkey.x + (monkey.width / 2)
                     score++;
                     playAudio(scoreSound);
                     if (score > highScore) {
