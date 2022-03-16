@@ -39,6 +39,7 @@ public class App extends JFrame {
         gameSurface = new GameSurface(difficulty); // gameFrame is a Jlabel
         frame.remove(menu);
         frame.add(gameSurface);
+        frame.repaint();
         frame.setVisible(true);
         gameSurface.requestFocus();
     }
