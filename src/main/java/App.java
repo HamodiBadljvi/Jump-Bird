@@ -10,6 +10,7 @@ public class App extends JFrame {
     private static boolean fullscreen = false;
     private static JFrame frame;
     private static GameMenu menu;
+    private static GameSurface gameSurface;
 
     public static void main(String[] args) {
         frame = new JFrame("Jumpy-Bird");
@@ -35,11 +36,19 @@ public class App extends JFrame {
     }
 
     public static void startGame() {
-        GameSurface gameSurface = new GameSurface(difficulty); // gameFrame is a Jlabel
+        gameSurface = new GameSurface(difficulty); // gameFrame is a Jlabel
         frame.remove(menu);
         frame.add(gameSurface);
         frame.setVisible(true);
         gameSurface.requestFocus();
+    }
+
+    public static void startMenu() {
+        frame.remove(gameSurface);
+        frame.add(menu);
+        frame.repaint();
+        frame.setVisible(true);
+        menu.requestFocus();
     }
 
     // #region G&S

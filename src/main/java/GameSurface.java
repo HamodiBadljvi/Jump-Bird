@@ -34,7 +34,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private BufferedImage monkeySprite;
     private BufferedImage[] monkeyBufferedImages = new BufferedImage[4];
     private int currentMonkey;
-    private int monkeyMovmentTime;
+    private int monkeyMovementTime;
     private boolean gameOver = false, started = false, grounded = false;
     private Timer fps;
     private Pipe pipeMaker;
@@ -187,8 +187,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             monkeySprite = monkeyBufferedImages[currentMonkey];
             g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
                     (int) monkey.getHeight(), null);
-            monkeyMovmentTime = (monkeyMovmentTime + 1) % 10; // 10*26ms=260
-            if (monkeyMovmentTime == 0) {
+            monkeyMovementTime = (monkeyMovementTime + 1) % 10; // 10*26ms=260
+            if (monkeyMovementTime == 0) {
                 currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
             }
         } else {
@@ -300,7 +300,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
+            App.startMenu();
         }
     }
 
