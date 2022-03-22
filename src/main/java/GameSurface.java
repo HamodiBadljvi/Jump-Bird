@@ -11,11 +11,13 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -48,19 +52,16 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     // Try get all the resources.
     public GameSurface(int difficulty) {
         try {
-            this.monkeySprite = ImageIO.read(new File("src/main/resources/apan_bak.png"));
-            this.background = ImageIO.read(new File("src/main/resources/newBackg.png"));
+            this.background = ImageIO.read(getClass().getResourceAsStream("NewBackg.png"));
 
-            jumpSound = AudioSystem.getClip();
-            jumpSound.open(AudioSystem.getAudioInputStream(new File(("src/main/resources/jump.wav"))));
-            scoreSound = AudioSystem.getClip();
-            scoreSound.open(AudioSystem.getAudioInputStream(new File(("src/main/resources/score.wav"))));
-            deathSound = AudioSystem.getClip();
-            deathSound.open(AudioSystem.getAudioInputStream(new File(("src/main/resources/death.wav"))));
+            jumpSound = loadSound("jump.wav");
+            scoreSound = loadSound("score.wav");
+            deathSound = loadSound("death.wav");
 
             getNewMonkeyImage();
         } catch (Exception e) {
-            System.err.println("Monke problem");
+            System.err.println("Monkey problem");
+            e.printStackTrace();
             // TODO: handle exception
         }
 
@@ -82,6 +83,24 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps = new Timer(0, this);
         fps.setRepeats(true);
         fps.setDelay(26);
+    }
+    private Clip loadSound(String soundFile) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+        Clip sound = AudioSystem.getClip();
+        InputStream resourceAsStream = getClass().getResourceAsStream(soundFile);
+        BufferedInputStream bufferedInputStream= new BufferedInputStream(resourceAsStream);
+        sound.open(AudioSystem.getAudioInputStream(bufferedInputStream));
+        return sound;
+    }
+    private void getNewMonkeyImage() {
+        try {
+            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
+            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
+            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
+            monkeyBufferedImages[3] = monkeyBufferedImages[1];
+            monkeySprite= monkeyBufferedImages[0];
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void jump() {
@@ -361,15 +380,4 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
     // #endregion
     // #endregion
-
-    private void getNewMonkeyImage() {
-        try {
-            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
-            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
-            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
-            monkeyBufferedImages[3] = monkeyBufferedImages[1];
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
