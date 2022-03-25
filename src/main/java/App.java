@@ -14,7 +14,6 @@ public class App extends JFrame {
 
     public static void main(String[] args) {
         frame = new JFrame("Jumpy-Bird");
-
         if (fullscreen) {
             WIDTH = (int) screenSize.getWidth();
             HEIGHT = (int) screenSize.getHeight();

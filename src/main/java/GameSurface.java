@@ -43,7 +43,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private int monkeyHeight, monkeyWidth;
     private int[] pipeSpace = { 200, 175, 150 };
     private Clip jumpSound, deathSound, scoreSound;
-    private Color myGreen;
+    private Color pipeColor;
 
     // Try get all the resources.
     public GameSurface(int difficulty) {
@@ -64,7 +64,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             // TODO: handle exception
         }
 
-        myGreen = new Color(60, 159, 0);
+        pipeColor = new Color(60, 159, 0);
 
         pipes = new ArrayList<>();
         pipeMaker = new Pipe();
@@ -88,15 +88,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         pipeSpeed = 4;
         // if not gameover monkey can jump.
         if (gameOver) {
-            newMonkey();
-            pipes.clear();
-            pipeMaker.addPipe(pipes);
-            ticks = 0;
-            score = 0;
-            gameOver = false;
-            grounded = false;
-            bounceSpeed = 0;
-            fallspeed = 0;
+            resetLevel();
         }
 
         if (!started) {
@@ -131,23 +123,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             }
 
             for (int i = 0; i < pipes.size(); i++) {
-                Rectangle currentRec = pipes.get(i);
-
-                if (currentRec.intersects(monkey)) {
-                    bounceMethod();
-                }
-                if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
-                        && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
-                    score++;
-                    playAudio(scoreSound);
-                    if (score > highScore) {
-                        highScore = score;
-                    }
-                }
-
-                if (currentRec.x + currentRec.width < 0) {
-                    pipes.remove(currentRec);
-                }
+                pipeIntersectAndScoreCheck(i);
             }
             // "fallspeed < X" where X = maximum fallspeed.
             if (ticks % 2 == 0 && fallspeed < 12) {
@@ -179,50 +155,103 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         g.drawImage(background, 0, 0, App.getWIDTH(), App.getHEIGHT(), null);
 
         if (monkeySprite != null) {
-            monkeySprite = monkeyBufferedImages[currentMonkey];
-            g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
-                    (int) monkey.getHeight(), null);
-            monkeyMovementTime = (monkeyMovementTime + 1) % 10; // 10*26ms=260
-            if (monkeyMovementTime == 0) {
-                currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
-            }
+            drawMonkey(g);
         } else {
             g.setColor(Color.red);
             g.fillRect(0, 0, d.width, d.height);
         }
 
         if (!started) {
-            g.setFont(new Font("Calibri", 1, 50));
-            g.setColor(Color.BLACK);
-            g.drawString("Welcome", App.getWIDTH() / 2 - 155, 80);
-            g.setColor(Color.WHITE);
-            g.drawString("Welcome", App.getWIDTH() / 2 - 160, 75);
+            drawWelcome(g);
         }
 
         if (started && !gameOver) {
-            drawRectangles(g, pipes);
-
-            g.setFont(new Font("Calibri", 1, 25));
-            g.setColor(Color.BLACK);
-            g.drawString("Score: " + score + " | " + highScore, 52, 52);
-            g.setColor(Color.WHITE);
-            g.drawString("Score: " + score + " | " + highScore, 50, 50);
+            drawScore(g);
         }
 
         if (gameOver) {
-            drawRectangles(g, pipes);
-
-            g.setFont(new Font("Calibri", 1, 50));
-            g.setColor(Color.BLACK);
-            g.drawString("You died", App.getWIDTH() / 2 - 155, 80);
-            g.setColor(Color.WHITE);
-            g.drawString("You died", App.getWIDTH() / 2 - 160, 75);
-            g.setFont(new Font("Calibri", 1, 25));
-            g.setColor(Color.BLACK);
-            g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 158, 152);
-            g.setColor(Color.WHITE);
-            g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
+            drawGameOver(g);
         }
+    }
+
+    private void pipeIntersectAndScoreCheck(int i) {
+        Rectangle currentRec = pipes.get(i);
+
+        if (currentRec.intersects(monkey)) {
+            bounceMethod();
+        }
+
+        if (i % 2 == 0 && monkey.x + (monkey.width / 2) > currentRec.x + (currentRec.width / 2) - 2
+                && monkey.x + (monkey.width / 2) < currentRec.x + (currentRec.width / 2) + 2) {
+            gainScore();
+        }
+
+        if (currentRec.x + currentRec.width < 0) {
+            pipes.remove(currentRec);
+        }
+    }
+
+    private void resetLevel() {
+        newMonkey();
+        pipes.clear();
+        pipeMaker.addPipe(pipes);
+        ticks = 0;
+        score = 0;
+        gameOver = false;
+        grounded = false;
+        bounceSpeed = 0;
+        fallspeed = 0;
+    }
+
+    private void gainScore() {
+        score++;
+        playAudio(scoreSound);
+        if (score > highScore) {
+            highScore = score;
+        }
+    }
+
+    private void drawMonkey(Graphics2D g) {
+        monkeySprite = monkeyBufferedImages[currentMonkey];
+        g.drawImage(monkeySprite, (int) monkey.getX(), (int) monkey.getY(), (int) monkey.getWidth(),
+                (int) monkey.getHeight(), null);
+        monkeyMovementTime = (monkeyMovementTime + 1) % 10; // 10*26ms=260
+        if (monkeyMovementTime == 0) {
+            currentMonkey = (currentMonkey + 1) % monkeyBufferedImages.length;
+        }
+    }
+
+    private void drawWelcome(Graphics2D g) {
+        g.setFont(new Font("Calibri", 1, 50));
+        g.setColor(Color.BLACK);
+        g.drawString("Welcome", App.getWIDTH() / 2 - 155, 80);
+        g.setColor(Color.WHITE);
+        g.drawString("Welcome", App.getWIDTH() / 2 - 160, 75);
+    }
+
+    private void drawScore(Graphics2D g) {
+        drawRectangles(g, pipes);
+
+        g.setFont(new Font("Calibri", 1, 25));
+        g.setColor(Color.BLACK);
+        g.drawString("Score: " + score + " | " + highScore, 52, 52);
+        g.setColor(Color.WHITE);
+        g.drawString("Score: " + score + " | " + highScore, 50, 50);
+    }
+
+    private void drawGameOver(Graphics2D g) {
+        drawRectangles(g, pipes);
+
+        g.setFont(new Font("Calibri", 1, 50));
+        g.setColor(Color.BLACK);
+        g.drawString("You died", App.getWIDTH() / 2 - 155, 80);
+        g.setColor(Color.WHITE);
+        g.drawString("You died", App.getWIDTH() / 2 - 160, 75);
+        g.setFont(new Font("Calibri", 1, 25));
+        g.setColor(Color.BLACK);
+        g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 158, 152);
+        g.setColor(Color.WHITE);
+        g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
     }
 
     private void playAudio(Clip clip) {
@@ -281,13 +310,13 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     public void drawRectangles(Graphics g, List<Rectangle> pipes) {
-        g.setColor(myGreen);
+        g.setColor(pipeColor);
         for (Rectangle rect : pipes) {
             drawRectangle(g, rect);
         }
     }
-    // #region keyStuff & G&S's
 
+    // #region keyStuff & G&S's
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
