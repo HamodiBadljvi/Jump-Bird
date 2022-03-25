@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,24 +82,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         fps = new Timer(0, this);
         fps.setRepeats(true);
         fps.setDelay(26);
-    }
-    private Clip loadSound(String soundFile) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-        Clip sound = AudioSystem.getClip();
-        InputStream resourceAsStream = getClass().getResourceAsStream(soundFile);
-        BufferedInputStream bufferedInputStream= new BufferedInputStream(resourceAsStream);
-        sound.open(AudioSystem.getAudioInputStream(bufferedInputStream));
-        return sound;
-    }
-    private void getNewMonkeyImage() {
-        try {
-            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
-            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
-            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
-            monkeyBufferedImages[3] = monkeyBufferedImages[1];
-            monkeySprite= monkeyBufferedImages[0];
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void jump() {
@@ -190,6 +171,27 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         if (gameOver) {
             drawGameOver(g);
+        }
+    }
+
+    private Clip loadSound(String soundFile)
+            throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+        Clip sound = AudioSystem.getClip();
+        InputStream resourceAsStream = getClass().getResourceAsStream(soundFile);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(resourceAsStream);
+        sound.open(AudioSystem.getAudioInputStream(bufferedInputStream));
+        return sound;
+    }
+
+    private void getNewMonkeyImage() {
+        try {
+            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
+            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
+            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
+            monkeyBufferedImages[3] = monkeyBufferedImages[1];
+            monkeySprite = monkeyBufferedImages[0];
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
