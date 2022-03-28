@@ -4,8 +4,8 @@ import java.awt.Toolkit;
 
 public class App extends JFrame {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private static int WIDTH = 600;
-    private static int HEIGHT = 400;
+    private static int screenWidth = 600;
+    private static int screenHeight = 400;
     private static int difficulty;
     private static boolean fullscreen = false;
     private static JFrame frame;
@@ -15,8 +15,8 @@ public class App extends JFrame {
     public static void main(String[] args) {
         frame = new JFrame("Jumpy-Bird");
         if (fullscreen) {
-            WIDTH = (int) screenSize.getWidth();
-            HEIGHT = (int) screenSize.getHeight();
+            screenWidth = (int) screenSize.getWidth();
+            screenHeight = (int) screenSize.getHeight();
             frame.setExtendedState(MAXIMIZED_BOTH);
             frame.setUndecorated(true);
         }
@@ -24,7 +24,7 @@ public class App extends JFrame {
         menu = new GameMenu();
 
         frame.setUndecorated(true);
-        frame.setSize(WIDTH, HEIGHT);
+        frame.setSize(screenWidth, screenHeight);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
@@ -53,11 +53,11 @@ public class App extends JFrame {
 
     // #region G&S
     public static int getWIDTH() {
-        return WIDTH;
+        return screenWidth;
     }
 
     public static int getHEIGHT() {
-        return HEIGHT;
+        return screenHeight;
     }
 
     public static void setDifficulty(int newDifficulty) {
