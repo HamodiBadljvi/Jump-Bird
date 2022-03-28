@@ -17,11 +17,6 @@ public class Pipe {
         pipes.add(new Rectangle(App.getWIDTH(), 0, width, randHeight - space));
     }
 
-    // TODO: Use for difficulty
-    public int getSpace() {
-        return space;
-    }
-
     public void setSpace(int space) {
         this.space = space;
     }
