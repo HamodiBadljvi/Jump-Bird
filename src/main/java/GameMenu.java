@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
+@SuppressWarnings("java:S1659")
 public class GameMenu extends JPanel implements ActionListener {
     private JButton easy, medium, hard, close, play;
     private BorderLayout layout;

@@ -30,7 +30,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-@SuppressWarnings({"java:S106", "java:S1948"})
+@SuppressWarnings({"java:S106", "java:S1948", "java:S1659"})
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
     private static final String SCORE = "Score: ", CALIBRI = "Calibri";
 
@@ -142,7 +142,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 monkey.y += fallspeed;
             }
 
-            if (ticks % (int) (App.getWIDTH() / 12) == 0) {
+            if (ticks % (App.getWIDTH() / 12) == 0) {
                 pipeMaker.addPipe(pipes);
             }
 
