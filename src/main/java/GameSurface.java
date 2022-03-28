@@ -30,8 +30,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+@SuppressWarnings({"java:S106", "java:S1948"})
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
-    private BufferedImage background;
+    private static final String SCORE = "Score: ", CALIBRI = "Calibri";
+
+    private BufferedImage backImg;
     private List<Rectangle> pipes;
     private Rectangle monkey;
     private BufferedImage monkeySprite;
@@ -42,16 +45,15 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private Timer fps;
     private Pipe pipeMaker;
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
-    private int score, highScore;
+    private int currentScore, highScore;
     private int monkeyHeight, monkeyWidth;
     private int[] pipeSpace = { 200, 175, 150 };
     private Clip jumpSound, deathSound, scoreSound;
     private Color pipeColor;
 
-    // Try get all the resources.
     public GameSurface(int difficulty) {
         try {
-            this.background = ImageIO.read(getClass().getResourceAsStream("NewBackg.png"));
+            this.backImg = ImageIO.read(getClass().getResourceAsStream("NewBackg.png"));
 
             jumpSound = loadSound("jump.wav");
             scoreSound = loadSound("score.wav");
@@ -109,6 +111,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
     }
 
+    @SuppressWarnings("java:S3776")
     @Override
     public void actionPerformed(ActionEvent e) {
         ticks++;
@@ -134,6 +137,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
                 monkey.x -= bounceSpeed;
                 bounceSpeed--;
             }
+
             if (!grounded) {
                 monkey.y += fallspeed;
             }
@@ -152,7 +156,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void drawSurface(Graphics2D g) {
         final Dimension d = this.getSize();
 
-        g.drawImage(background, 0, 0, App.getWIDTH(), App.getHEIGHT(), null);
+        g.drawImage(backImg, 0, 0, App.getWIDTH(), App.getHEIGHT(), null);
 
         if (monkeySprite != null) {
             drawMonkey(g);
@@ -217,7 +221,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         pipes.clear();
         pipeMaker.addPipe(pipes);
         ticks = 0;
-        score = 0;
+        currentScore = 0;
         gameOver = false;
         grounded = false;
         bounceSpeed = 0;
@@ -225,10 +229,10 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void gainScore() {
-        score++;
+        currentScore++;
         playAudio(scoreSound);
-        if (score > highScore) {
-            highScore = score;
+        if (currentScore > highScore) {
+            highScore = currentScore;
         }
     }
 
@@ -243,7 +247,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void drawWelcome(Graphics2D g) {
-        g.setFont(new Font("Calibri", 1, 50));
+        g.setFont(new Font(CALIBRI, 1, 50));
         g.setColor(Color.BLACK);
         g.drawString("Welcome", App.getWIDTH() / 2 - 155, 80);
         g.setColor(Color.WHITE);
@@ -253,26 +257,26 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private void drawScore(Graphics2D g) {
         drawRectangles(g, pipes);
 
-        g.setFont(new Font("Calibri", 1, 25));
+        g.setFont(new Font(CALIBRI, 1, 25));
         g.setColor(Color.BLACK);
-        g.drawString("Score: " + score + " | " + highScore, 52, 52);
+        g.drawString(SCORE + currentScore + " | " + highScore, 52, 52);
         g.setColor(Color.WHITE);
-        g.drawString("Score: " + score + " | " + highScore, 50, 50);
+        g.drawString(SCORE + currentScore + " | " + highScore, 50, 50);
     }
 
     private void drawGameOver(Graphics2D g) {
         drawRectangles(g, pipes);
 
-        g.setFont(new Font("Calibri", 1, 50));
+        g.setFont(new Font(CALIBRI, 1, 50));
         g.setColor(Color.BLACK);
         g.drawString("You died", App.getWIDTH() / 2 - 155, 80);
         g.setColor(Color.WHITE);
         g.drawString("You died", App.getWIDTH() / 2 - 160, 75);
-        g.setFont(new Font("Calibri", 1, 25));
+        g.setFont(new Font(CALIBRI, 1, 25));
         g.setColor(Color.BLACK);
-        g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 158, 152);
+        g.drawString(SCORE + currentScore + " | " + highScore, App.getWIDTH() / 2 - 158, 152);
         g.setColor(Color.WHITE);
-        g.drawString("Score: " + score + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
+        g.drawString(SCORE + currentScore + " | " + highScore, App.getWIDTH() / 2 - 160, 150);
     }
 
     private void playAudio(Clip clip) {
@@ -388,26 +392,32 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     @Override
     public void keyPressed(KeyEvent e) {
+        // Unused
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
+        // Unused
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        // Unused
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        // Unused
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        // Unused
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        // Unused
     }
     // #endregion
     // #endregion

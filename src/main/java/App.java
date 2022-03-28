@@ -17,7 +17,7 @@ public class App extends JFrame {
         if (fullscreen) {
             WIDTH = (int) screenSize.getWidth();
             HEIGHT = (int) screenSize.getHeight();
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setExtendedState(MAXIMIZED_BOTH);
             frame.setUndecorated(true);
         }
 
@@ -26,7 +26,7 @@ public class App extends JFrame {
         frame.setUndecorated(true);
         frame.setSize(WIDTH, HEIGHT);
         frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.add(menu);
         frame.setVisible(true);
