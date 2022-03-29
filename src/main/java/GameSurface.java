@@ -32,6 +32,8 @@ import javax.swing.Timer;
 
 @SuppressWarnings({"java:S106", "java:S1948", "java:S1659"})
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
+    private static final String SCORE_LOG = "score.log";
+
     private static final String SCORE = "Score: ", CALIBRI = "Calibri";
 
     private BufferedImage backImg;
@@ -361,7 +363,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void getHighScore() {
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("src/main/resources/score.log"))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(SCORE_LOG))) {
             highScore = reader.read();
             if (highScore < 0) {
                 highScore = 0;
@@ -372,7 +374,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void saveHighScore() {
-        try (FileWriter writer = new FileWriter("src/main/resources/score.log");
+        try (FileWriter writer = new FileWriter(SCORE_LOG);
                 BufferedWriter bw = new BufferedWriter(writer);) {
             if (gameOver) {
                 bw.write(highScore);
@@ -380,6 +382,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
         } catch (IOException e) {
             // TODO: handle exception
+            e.printStackTrace();
         }
     }
 
