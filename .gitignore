@@ -1,5 +1,8 @@
 /target/
 score.log
+easyScore.log
+mediumScore.log
+hardScore.log
 
 ## Java
 

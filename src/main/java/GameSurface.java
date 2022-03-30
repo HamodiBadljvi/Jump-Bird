@@ -32,10 +32,11 @@ import javax.swing.Timer;
 
 @SuppressWarnings({ "java:S106", "java:S1948", "java:S1659" })
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
-    private static final String SCORE_LOG = "score.log";
+    private static String SCORE_LOG;
 
     private static final String SCORE = "Score: ", CALIBRI = "Calibri";
 
+    private final String[] scoreLogs = {"easyScore.log", "mediumScore.log", "hardScore.log"};
     private BufferedImage backImg;
     private List<Rectangle> pipes;
     private Rectangle monkey;
@@ -69,6 +70,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
             e.printStackTrace();
             // TODO: handle exception
         }
+        SCORE_LOG = scoreLogs[difficulty];
 
         pipeColor = new Color(60, 159, 0);
 
