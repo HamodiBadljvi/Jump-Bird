@@ -58,7 +58,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     public GameSurface(int difficulty) {
         try {
-            this.backImg = ImageIO.read(getClass().getResourceAsStream("NewBackg.png"));
+            this.backImg = ImageIO.read(getClass().getResourceAsStream("Jungle.png"));
 
             jumpSound = loadSound("jump.wav");
             scoreSound = loadSound("score.wav");
@@ -72,7 +72,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
         SCORE_LOG = scoreLogs[difficulty];
 
-        pipeColor = new Color(60, 159, 0);
+        pipeColor = new Color(139,69,19);
 
         pipes = new ArrayList<>();
         pipeMaker = new Pipe();
@@ -195,9 +195,9 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     private void getNewMonkeyImage() {
         try {
-            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apan_bak.png"));
-            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apan.png"));
-            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apan_fram.png"));
+            monkeyBufferedImages[0] = ImageIO.read(getClass().getResourceAsStream("apanbak.png"));
+            monkeyBufferedImages[1] = ImageIO.read(getClass().getResourceAsStream("apanrak.png"));
+            monkeyBufferedImages[2] = ImageIO.read(getClass().getResourceAsStream("apanfram.png"));
             monkeyBufferedImages[3] = monkeyBufferedImages[1];
             monkeySprite = monkeyBufferedImages[0];
         } catch (IOException e) {
