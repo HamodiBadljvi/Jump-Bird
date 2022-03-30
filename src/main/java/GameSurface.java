@@ -30,7 +30,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-@SuppressWarnings({"java:S106", "java:S1948", "java:S1659"})
+@SuppressWarnings({ "java:S106", "java:S1948", "java:S1659" })
 public class GameSurface extends JPanel implements KeyListener, MouseListener, ActionListener {
     private static final String SCORE_LOG = "score.log";
 
@@ -49,6 +49,8 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     private int fallspeed, pipeSpeed, ticks, bounceSpeed;
     private int currentScore, highScore;
     private int monkeyHeight, monkeyWidth;
+    private long timeOfDeath;
+    private int deathDelay = 500;
     private int[] pipeSpace = { 200, 175, 150 };
     private Clip jumpSound, deathSound, scoreSound;
     private Color pipeColor;
@@ -89,7 +91,6 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void jump() {
-        pipeSpeed = 4;
         // if not gameover monkey can jump.
         if (gameOver) {
             resetLevel();
@@ -102,6 +103,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
         }
 
         if (!gameOver) {
+            pipeSpeed = 4;
             if (fallspeed > 0) {
                 fallspeed = 0;
             }
@@ -219,6 +221,15 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void resetLevel() {
+        if (System.currentTimeMillis() - timeOfDeath < deathDelay) {
+            return;
+        }
+        timeOfDeath = 0;
+        /*
+         * när vi dör ska vi spara in timeofdeath
+         * if (tiden nu - timeOfDeath < xxxx)
+         * return
+         */
         newMonkey();
         pipes.clear();
         pipeMaker.addPipe(pipes);
@@ -303,6 +314,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
     }
 
     private void gameOverMethod() {
+        timeOfDeath = System.currentTimeMillis();
         playAudio(deathSound);
         gameOver = true;
         pipeSpeed = 0;
