@@ -58,7 +58,7 @@ public class GameSurface extends JPanel implements KeyListener, MouseListener, A
 
     public GameSurface(int difficulty) {
         try {
-            this.backImg = ImageIO.read(getClass().getResourceAsStream("Jungle.png"));
+            this.backImg = ImageIO.read(getClass().getResourceAsStream("jungle.png"));
 
             jumpSound = loadSound("jump.wav");
             scoreSound = loadSound("score.wav");
